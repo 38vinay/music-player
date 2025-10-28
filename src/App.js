@@ -23,6 +23,7 @@ function App() {
             minHeight: "100vh",
             color: "white",
             overflowX: "hidden",
+            
           }}
         >
           {/* Top Navbar */}
@@ -30,7 +31,7 @@ function App() {
 
           <div className="d-flex">
             {/* Sidebar */}
-            <div className="d-none d-md-block">
+            <div className="d-none py-5 d-md-block">
               <Sidebar />
             </div>
 

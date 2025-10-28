@@ -8,7 +8,6 @@ const SongList = ({ songs, onPlay }) => {
   const { likedSongs, toggleLikeSong } = useContext(MusicContext);
   const [showModal, setShowModal] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
-
   const [toastMsg, setToastMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
 
@@ -34,36 +33,65 @@ const SongList = ({ songs, onPlay }) => {
 
   return (
     <>
-      <div className="row">
+      <div
+        className="row justify-content-start"
+        style={{
+          marginTop: "10px", // spacing for top area
+        }}
+      >
         {songs.map((song) => (
-          <div className="col-md-3 mb-4" key={song.trackId}>
-            <div className="card bg-dark text-light h-100 shadow-sm">
+          <div
+            className="col-6 col-sm-4 col-md-3 col-lg-2"
+            key={song.trackId}
+            style={{
+              padding: "10px", // ✅ Adds spacing *around each card*
+            }}
+          >
+            <div
+              className="card bg-dark text-light shadow-sm song-card"
+              style={{
+                borderRadius: "10px",
+                overflow: "hidden",
+                transition: "transform 0.25s ease, box-shadow 0.25s ease",
+              }}
+            >
               <img
-                src={song.artworkUrl100.replace('100x100bb', '600x600bb')}
+                src={song.artworkUrl100.replace("100x100bb", "600x600bb")}
                 className="card-img-top"
                 alt={song.trackName}
                 style={{
                   objectFit: "cover",
                   width: "100%",
-                  height: "auto",
+                  height: "240px",
                   borderRadius: "8px",
+              
+                  transition: "transform 0.3s ease",
                 }}
               />
 
-              <div className="card-body text-center">
-                <h6 className="text-truncate">{song.trackName}</h6>
-                <p className="text-muted mb-2">{song.artistName}</p>
+              <div className="card-body text-center p-2">
+                <h6 className="text-truncate mb-1" style={{ fontSize: "0.9rem" }}>
+                  {song.trackName}
+                </h6>
+                <p
+                  className="text-muted mb-2 text-truncate"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  {song.artistName}
+                </p>
 
                 <div className="d-flex justify-content-center gap-2">
                   <button
                     className="btn btn-outline-success btn-sm"
+                    style={{ padding: "2px 6px", fontSize: "0.8rem" }}
                     onClick={() => onPlay(song)}
                   >
-                    ▶ Play
+                    ▶
                   </button>
 
                   <button
                     className="btn btn-outline-light btn-sm"
+                    style={{ padding: "2px 6px" }}
                     onClick={() => handleLikeClick(song)}
                   >
                     <FaHeart
@@ -77,6 +105,7 @@ const SongList = ({ songs, onPlay }) => {
 
                   <button
                     className="btn btn-outline-light btn-sm"
+                    style={{ padding: "2px 6px" }}
                     onClick={() => handleAddClick(song)}
                   >
                     <FaPlus />

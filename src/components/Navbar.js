@@ -8,7 +8,7 @@ import {
 } from "react-bootstrap";
 import { FaSearch, FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo .svg";
+import logo from "../assets/logo.svg";
 
 export default function AppNavbar({ onSearch, onToggleSidebar }) {
   const navigate = useNavigate();
@@ -27,10 +27,11 @@ export default function AppNavbar({ onSearch, onToggleSidebar }) {
       expand="lg"
       bg="black"
       variant="dark"
-      className="px-3 py-2 shadow-sm sticky-top"
+      fixed="top" // ✅ Makes navbar stay fixed at the top
+      className="px-3 py-2 shadow-sm"
       style={{
         borderBottom: "1px solid #222",
-        zIndex: 1000,
+        zIndex: 1050, // stays above all elements
       }}
     >
       <Container fluid className="d-flex align-items-center justify-content-between">
@@ -72,7 +73,7 @@ export default function AppNavbar({ onSearch, onToggleSidebar }) {
           </Button>
         </Form>
 
-        {/* Profile Button (optional) */}
+        {/* Profile / Right side */}
         <div className="d-none d-lg-block text-light fw-semibold">
           <span>👤 User</span>
         </div>
