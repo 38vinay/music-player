@@ -36,7 +36,19 @@ export default function Library() {
                       onClick={() => playTrack(song)}
                       style={{ cursor: "pointer" }}
                     >
-                      <img src={song.artworkUrl100} className="card-img-top" alt={song.trackName} />
+                      <img
+                        src={song.artworkUrl100.replace("100x100bb", "600x600bb")}
+                        className="card-img-top"
+                        alt={song.trackName}
+                        style={{
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "240px",
+                          borderRadius: "8px",
+
+                          transition: "transform 0.3s ease",
+                        }}
+                      />
                       <div className="card-body">
                         <h6 className="text-truncate">{song.trackName}</h6>
                         <small>{song.artistName}</small>

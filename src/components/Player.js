@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { MusicContext } from "../context/MusicContext";
 import {
   PlayFill,
@@ -9,48 +9,21 @@ import {
 import { Button } from "react-bootstrap";
 
 export default function Player() {
-  const { currentTrack, isPlaying, togglePlay, nextTrack, prevTrack } =
-    useContext(MusicContext);
+  const {
+    currentTrack,
+    isPlaying,
+    togglePlay,
+    nextTrack,
+    prevTrack,
+    currentTime,
+    duration,
+    seekAudio,
+  } = useContext(MusicContext);
 
-  const audioRef = useRef(new Audio());
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-
-  // 🎵 Load & Play Track when currentTrack changes
-  useEffect(() => {
-    if (!currentTrack) return;
-    audioRef.current.src = currentTrack.previewUrl;
-    audioRef.current.play().catch(() => {});
-    setProgress(0);
-    setDuration(0);
-  }, [currentTrack]);
-
-  // ▶️ Handle Play / Pause toggle
-  useEffect(() => {
-    if (!audioRef.current) return;
-    if (isPlaying) audioRef.current.play().catch(() => {});
-    else audioRef.current.pause();
-  }, [isPlaying]);
-
-  // ⏩ Progress Bar Update
-  useEffect(() => {
-    const audio = audioRef.current;
-    const update = () => {
-      setCurrentTime(audio.currentTime);
-      setDuration(audio.duration || 30); // iTunes preview ~30s
-      setProgress((audio.currentTime / (audio.duration || 30)) * 100);
-    };
-    audio.addEventListener("timeupdate", update);
-    return () => audio.removeEventListener("timeupdate", update);
-  }, []);
-
-  // ⏮️ Seek in the track
-  const handleSeek = (e) => {
-    const newProgress = e.target.value;
-    setProgress(newProgress);
-    audioRef.current.currentTime = (newProgress / 100) * duration;
-  };
+  const progress = useMemo(() => {
+    if (!duration || duration === 0) return 0;
+    return Math.min(100, (currentTime / duration) * 100);
+  }, [currentTime, duration]);
 
   const formatTime = (seconds) => {
     if (isNaN(seconds)) return "0:00";
@@ -70,24 +43,28 @@ export default function Player() {
         zIndex: 1000,
       }}
     >
-      {/* 🎵 Progress bar */}
+      {/* Progress Bar */}
       <div className="w-100 d-flex align-items-center">
-        <small style={{ width: 40 }}>{formatTime(currentTime)}</small>
+        <small style={{ width: 46 }}>{formatTime(currentTime)}</small>
         <input
           type="range"
           min="0"
           max="100"
           value={progress}
-          onChange={handleSeek}
+          onChange={(e) => {
+            const pct = Number(e.target.value);
+            const time = (pct / 100) * (duration || 30);
+            seekAudio(time);
+          }}
           className="flex-grow-1 mx-2"
           style={{ accentColor: "#e50914", cursor: "pointer" }}
         />
-        <small style={{ width: 40, textAlign: "right" }}>
+        <small style={{ width: 46, textAlign: "right" }}>
           {formatTime(duration)}
         </small>
       </div>
 
-      {/* 🎧 Player Controls */}
+      {/* Controls */}
       <div className="d-flex align-items-center justify-content-between w-100 mt-2">
         {/* Left: Song Info */}
         <div className="d-flex align-items-center">
@@ -112,7 +89,7 @@ export default function Player() {
           </div>
         </div>
 
-        {/* Center: Controls */}
+        {/* Center Controls */}
         <div className="d-flex align-items-center gap-3">
           <Button
             variant="outline-light"
@@ -150,7 +127,7 @@ export default function Player() {
           </Button>
         </div>
 
-        {/* Spacer Right (for alignment) */}
+        {/* Spacer Right */}
         <div style={{ width: "110px" }} />
       </div>
     </div>
