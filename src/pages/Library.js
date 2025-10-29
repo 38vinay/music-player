@@ -9,7 +9,7 @@ export default function Library() {
 
   return (
     <div className="text-light">
-      <div className="d-flex justify-content-between align-items-center mb-3">
+      <div className="d-flex justify-content-between align-items-center mt-5 mb-3">
         <h3>🎶 Your Library</h3>
         <Button variant="success" onClick={() => setShowModal(true)}>+ Create Playlist</Button>
       </div>

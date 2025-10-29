@@ -5,8 +5,8 @@ export const MusicContext = createContext();
 export const MusicProvider = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [queue, setQueue] = useState([]); // all tracks currently in list
-  const [currentIndex, setCurrentIndex] = useState(0); // index in queue
+  const [queue, setQueue] = useState([]); // all tracks in list
+  const [currentIndex, setCurrentIndex] = useState(0); // current position in queue
 
   const [playlists, setPlaylists] = useState(
     JSON.parse(localStorage.getItem("playlists")) || []
@@ -17,25 +17,34 @@ export const MusicProvider = ({ children }) => {
 
   const audioRef = useRef(new Audio());
 
-  // 🔊 PLAY SELECTED TRACK
+  // 🎵 PLAY SELECTED TRACK
   const playTrack = (track, allSongs = []) => {
-    setCurrentTrack(track);
+    if (!track?.previewUrl) return;
+
+    // Update queue if new song list provided
     if (allSongs.length) {
       setQueue(allSongs);
       const index = allSongs.findIndex((s) => s.trackId === track.trackId);
       setCurrentIndex(index !== -1 ? index : 0);
     }
-    audioRef.current.src = track.previewUrl;
-    audioRef.current.play();
+
+    // Set current track and play
+    setCurrentTrack(track);
+    const audio = audioRef.current;
+    audio.pause();
+    audio.src = track.previewUrl;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
     setIsPlaying(true);
   };
 
   // ▶️ TOGGLE PLAY / PAUSE
   const togglePlay = () => {
+    const audio = audioRef.current;
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
     } else {
-      audioRef.current.play();
+      audio.play().catch(() => {});
     }
     setIsPlaying(!isPlaying);
   };
@@ -47,8 +56,12 @@ export const MusicProvider = ({ children }) => {
     const next = queue[nextIndex];
     setCurrentTrack(next);
     setCurrentIndex(nextIndex);
-    audioRef.current.src = next.previewUrl;
-    audioRef.current.play();
+
+    const audio = audioRef.current;
+    audio.pause();
+    audio.src = next.previewUrl;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
     setIsPlaying(true);
   };
 
@@ -59,23 +72,31 @@ export const MusicProvider = ({ children }) => {
     const prev = queue[prevIndex];
     setCurrentTrack(prev);
     setCurrentIndex(prevIndex);
-    audioRef.current.src = prev.previewUrl;
-    audioRef.current.play();
+
+    const audio = audioRef.current;
+    audio.pause();
+    audio.src = prev.previewUrl;
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
     setIsPlaying(true);
   };
 
   // ❤️ LIKE / UNLIKE SONG
   const toggleLikeSong = (song) => {
     const exists = likedSongs.find((s) => s.trackId === song.trackId);
-    if (exists) {
-      setLikedSongs(likedSongs.filter((s) => s.trackId !== song.trackId));
-    } else {
-      setLikedSongs([...likedSongs, song]);
-    }
+    const updated = exists
+      ? likedSongs.filter((s) => s.trackId !== song.trackId)
+      : [...likedSongs, song];
+    setLikedSongs(updated);
   };
 
-  // 🎵 PLAYLIST MANAGEMENT
+  // 🎧 PLAYLIST MANAGEMENT
   const createPlaylist = (name) => {
+    if (!name?.trim()) return;
+    const exists = playlists.find(
+      (p) => p.name.toLowerCase() === name.toLowerCase()
+    );
+    if (exists) return;
     const newPlaylist = { name, tracks: [] };
     setPlaylists([...playlists, newPlaylist]);
   };
@@ -87,15 +108,17 @@ export const MusicProvider = ({ children }) => {
   const addToPlaylist = (playlistName, song) => {
     const updated = playlists.map((p) => {
       if (p.name === playlistName) {
-        const exists = p.tracks.find((s) => s.trackId === song.trackId);
-        if (!exists) p.tracks.push(song);
+        const exists = p.tracks.some((s) => s.trackId === song.trackId);
+        if (!exists) {
+          return { ...p, tracks: [...p.tracks, song] };
+        }
       }
       return p;
     });
     setPlaylists(updated);
   };
 
-  // 💾 Save liked songs & playlists
+  // 💾 SAVE LIKED SONGS & PLAYLISTS TO LOCAL STORAGE
   useEffect(() => {
     localStorage.setItem("playlists", JSON.stringify(playlists));
   }, [playlists]);
@@ -104,7 +127,7 @@ export const MusicProvider = ({ children }) => {
     localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
   }, [likedSongs]);
 
-  // ⏩ AUTO-PLAY NEXT SONG when current finishes
+  // ⏩ AUTO PLAY NEXT WHEN SONG ENDS
   useEffect(() => {
     const audio = audioRef.current;
     const handleEnded = () => {
@@ -113,6 +136,15 @@ export const MusicProvider = ({ children }) => {
     audio.addEventListener("ended", handleEnded);
     return () => audio.removeEventListener("ended", handleEnded);
   }, [queue, currentIndex]);
+
+  // 🧹 CLEAN UP AUDIO ON UNMOUNT
+  useEffect(() => {
+    const audio = audioRef.current;
+    return () => {
+      audio.pause();
+      audio.src = "";
+    };
+  }, []);
 
   return (
     <MusicContext.Provider

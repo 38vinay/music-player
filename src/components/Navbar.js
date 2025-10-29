@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useState} from "react";
 import {
   Navbar,
   Form,
@@ -22,16 +22,18 @@ export default function AppNavbar({ onSearch, onToggleSidebar }) {
     }
   };
 
+  
+
   return (
     <Navbar
       expand="lg"
       bg="black"
       variant="dark"
-      fixed="top" // ✅ Makes navbar stay fixed at the top
+      fixed="top"
       className="px-3 py-2 shadow-sm"
       style={{
         borderBottom: "1px solid #222",
-        zIndex: 1050, // stays above all elements
+        zIndex: 1050, 
       }}
     >
       <Container fluid className="d-flex align-items-center justify-content-between">

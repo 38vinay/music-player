@@ -1,143 +1,157 @@
-import React, { useContext, useRef, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { MusicContext } from "../context/MusicContext";
-import { Button, ProgressBar } from "react-bootstrap";
 import {
   PlayFill,
   PauseFill,
   SkipStartFill,
   SkipEndFill,
-  VolumeUpFill,
-  VolumeMuteFill,
 } from "react-bootstrap-icons";
+import { Button } from "react-bootstrap";
 
 export default function Player() {
-  const {
-    currentTrack,
-    isPlaying,
-    togglePlay,
-    nextTrack,
-    prevTrack,
-  } = useContext(MusicContext);
+  const { currentTrack, isPlaying, togglePlay, nextTrack, prevTrack } =
+    useContext(MusicContext);
 
   const audioRef = useRef(new Audio());
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
 
-  // Load track when changed
+  // 🎵 Load & Play Track when currentTrack changes
   useEffect(() => {
-    if (currentTrack) {
-      audioRef.current.src = currentTrack.previewUrl;
-      audioRef.current.play();
-    }
+    if (!currentTrack) return;
+    audioRef.current.src = currentTrack.previewUrl;
+    audioRef.current.play().catch(() => {});
+    setProgress(0);
+    setDuration(0);
   }, [currentTrack]);
 
-  // Play / Pause handling
+  // ▶️ Handle Play / Pause toggle
   useEffect(() => {
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
+    if (!audioRef.current) return;
+    if (isPlaying) audioRef.current.play().catch(() => {});
+    else audioRef.current.pause();
   }, [isPlaying]);
 
-  // Progress update
+  // ⏩ Progress Bar Update
   useEffect(() => {
     const audio = audioRef.current;
-    const updateProgress = () => {
+    const update = () => {
       setCurrentTime(audio.currentTime);
-      setDuration(audio.duration || 30); // iTunes previews are 30 sec
+      setDuration(audio.duration || 30); // iTunes preview ~30s
       setProgress((audio.currentTime / (audio.duration || 30)) * 100);
     };
-    audio.addEventListener("timeupdate", updateProgress);
-    return () => audio.removeEventListener("timeupdate", updateProgress);
+    audio.addEventListener("timeupdate", update);
+    return () => audio.removeEventListener("timeupdate", update);
   }, []);
 
-  // Volume change
-  useEffect(() => {
-    audioRef.current.volume = isMuted ? 0 : volume;
-  }, [volume, isMuted]);
-
-  const handleProgressChange = (e) => {
-    const newTime = (e.target.value / 100) * duration;
-    audioRef.current.currentTime = newTime;
+  // ⏮️ Seek in the track
+  const handleSeek = (e) => {
+    const newProgress = e.target.value;
+    setProgress(newProgress);
+    audioRef.current.currentTime = (newProgress / 100) * duration;
   };
 
-  const formatTime = (sec) => {
-    if (isNaN(sec)) return "0:00";
-    const minutes = Math.floor(sec / 60);
-    const seconds = Math.floor(sec % 60).toString().padStart(2, "0");
-    return `${minutes}:${seconds}`;
+  const formatTime = (seconds) => {
+    if (isNaN(seconds)) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
   };
 
   if (!currentTrack) return null;
 
   return (
-    <div className="player-bar bg-dark text-white d-flex align-items-center justify-content-between p-2 fixed-bottom shadow-lg">
-      {/* Left: Album Art + Info */}
-      <div className="d-flex align-items-center">
-        <img
-          src={currentTrack.artworkUrl100}
-          alt="Album Art"
-          className="me-3 rounded"
-          width="60"
-        />
-        <div>
-          <h6 className="mb-0">{currentTrack.trackName}</h6>
-          <small className="text-muted">{currentTrack.artistName}</small>
-        </div>
-      </div>
-
-      {/* Center: Controls + Progress */}
-      <div className="text-center flex-grow-1 mx-4">
-        <div className="d-flex justify-content-center align-items-center mb-2">
-          <Button variant="link" onClick={prevTrack} className="text-white">
-            <SkipStartFill size={25} />
-          </Button>
-          <Button variant="link" onClick={togglePlay} className="text-white mx-3">
-            {isPlaying ? <PauseFill size={35} /> : <PlayFill size={35} />}
-          </Button>
-          <Button variant="link" onClick={nextTrack} className="text-white">
-            <SkipEndFill size={25} />
-          </Button>
-        </div>
-
-        <div className="d-flex align-items-center">
-          <small className="me-2">{formatTime(currentTime)}</small>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={progress}
-            onChange={handleProgressChange}
-            className="form-range flex-grow-1"
-            style={{ accentColor: "red" }}
-          />
-          <small className="ms-2">{formatTime(duration)}</small>
-        </div>
-      </div>
-
-      {/* Right: Volume Control */}
-      <div className="d-flex align-items-center">
-        <Button
-          variant="link"
-          onClick={() => setIsMuted(!isMuted)}
-          className="text-white"
-        >
-          {isMuted ? <VolumeMuteFill size={25} /> : <VolumeUpFill size={25} />}
-        </Button>
+    <div
+      className="fixed-bottom bg-dark text-white d-flex flex-column align-items-center justify-content-center px-4 py-2"
+      style={{
+        borderTop: "1px solid #333",
+        boxShadow: "0 -2px 10px rgba(0,0,0,0.6)",
+        zIndex: 1000,
+      }}
+    >
+      {/* 🎵 Progress bar */}
+      <div className="w-100 d-flex align-items-center">
+        <small style={{ width: 40 }}>{formatTime(currentTime)}</small>
         <input
           type="range"
           min="0"
-          max="1"
-          step="0.01"
-          value={isMuted ? 0 : volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          className="form-range ms-2"
-          style={{ width: "100px", accentColor: "red" }}
+          max="100"
+          value={progress}
+          onChange={handleSeek}
+          className="flex-grow-1 mx-2"
+          style={{ accentColor: "#e50914", cursor: "pointer" }}
         />
+        <small style={{ width: 40, textAlign: "right" }}>
+          {formatTime(duration)}
+        </small>
+      </div>
+
+      {/* 🎧 Player Controls */}
+      <div className="d-flex align-items-center justify-content-between w-100 mt-2">
+        {/* Left: Song Info */}
+        <div className="d-flex align-items-center">
+          <img
+            src={currentTrack.artworkUrl100}
+            alt={currentTrack.trackName}
+            style={{
+              width: 55,
+              height: 55,
+              borderRadius: 10,
+              marginRight: 12,
+              objectFit: "cover",
+            }}
+          />
+          <div>
+            <div className="fw-bold" style={{ fontSize: "1rem" }}>
+              {currentTrack.trackName}
+            </div>
+            <div className="text-muted" style={{ fontSize: "0.85rem" }}>
+              {currentTrack.artistName}
+            </div>
+          </div>
+        </div>
+
+        {/* Center: Controls */}
+        <div className="d-flex align-items-center gap-3">
+          <Button
+            variant="outline-light"
+            onClick={prevTrack}
+            className="rounded-circle"
+            style={{ width: 40, height: 40 }}
+          >
+            <SkipStartFill size={20} />
+          </Button>
+
+          <Button
+            onClick={togglePlay}
+            className="rounded-circle"
+            style={{
+              width: 55,
+              height: 55,
+              backgroundColor: "#e50914",
+              border: "none",
+            }}
+          >
+            {isPlaying ? (
+              <PauseFill size={28} color="white" />
+            ) : (
+              <PlayFill size={28} color="white" />
+            )}
+          </Button>
+
+          <Button
+            variant="outline-light"
+            onClick={nextTrack}
+            className="rounded-circle"
+            style={{ width: 40, height: 40 }}
+          >
+            <SkipEndFill size={20} />
+          </Button>
+        </div>
+
+        {/* Spacer Right (for alignment) */}
+        <div style={{ width: "110px" }} />
       </div>
     </div>
   );
