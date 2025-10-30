@@ -5,63 +5,94 @@ export const MusicContext = createContext();
 export const MusicProvider = ({ children }) => {
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [queue, setQueue] = useState([]); // all tracks in list
-  const [currentIndex, setCurrentIndex] = useState(0); // current position in queue
+  const [queue, setQueue] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  const [playlists, setPlaylists] = useState(
-    JSON.parse(localStorage.getItem("playlists")) || []
-  );
-  const [likedSongs, setLikedSongs] = useState(
-    JSON.parse(localStorage.getItem("likedSongs")) || []
-  );
+  const [playlists, setPlaylists] = useState(() => {
+    try {
+      const saved = localStorage.getItem("playlists");
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.warn("Could not load playlists:", error);
+      return [];
+    }
+  });
 
-  // single audio instance used across the app
+  const [likedSongs, setLikedSongs] = useState(() => {
+    try {
+      const saved = localStorage.getItem("likedSongs");
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.warn("Could not load liked songs:", error);
+      return [];
+    }
+  });
+
   const audioRef = useRef(new Audio());
-
-  // progress state exposed to UI
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // helper: optionally use a CORS proxy for previews that block playback
   const proxify = (url) => {
     if (!url) return "";
-    // If you want to enable proxying, uncomment below and return proxied URL.
-    // return `https://corsproxy.io/?${encodeURIComponent(url)}`;
-    return url; // default: use original URL
+    return url;
   };
 
-  // play a selected track (and optionally set a queue)
   const playTrack = (track, allSongs = []) => {
-    if (!track?.previewUrl) return;
+    if (!track?.previewUrl) {
+      console.warn("No preview URL available for track:", track);
+      return;
+    }
+    
     const audio = audioRef.current;
 
-    // update queue if provided
-    if (allSongs.length) {
+    if (allSongs.length > 0) {
       setQueue(allSongs);
       const index = allSongs.findIndex((s) => s.trackId === track.trackId);
       setCurrentIndex(index !== -1 ? index : 0);
+      console.log(`Queue set with ${allSongs.length} songs, playing index ${index !== -1 ? index : 0}`);
+    } else if (queue.length > 0) {
+      const index = queue.findIndex((s) => s.trackId === track.trackId);
+      if (index !== -1) {
+        setCurrentIndex(index);
+        console.log(`Playing from existing queue, index ${index}`);
+      } else {
+        setQueue([track]);
+        setCurrentIndex(0);
+        console.log("Track not in queue, creating new single-track queue");
+      }
+    } else {
+      setQueue([track]);
+      setCurrentIndex(0);
+      console.log("No queue exists, creating single-track queue");
     }
 
     setCurrentTrack(track);
     const url = proxify(track.previewUrl);
 
-    // load and play (update isPlaying only if play succeeds)
     audio.pause();
     audio.src = url;
     audio.currentTime = 0;
+    audio.load();
+    
     audio
       .play()
-      .then(() => setIsPlaying(true))
+      .then(() => {
+        console.log("Playing:", track.trackName);
+        setIsPlaying(true);
+      })
       .catch((err) => {
         console.warn("Playback failed:", err);
         setIsPlaying(false);
       });
   };
 
-  // toggle play / pause
   const togglePlay = () => {
     const audio = audioRef.current;
-    if (!audio.src) return; // nothing to play
+    if (!audio.src) {
+      console.warn("No track loaded");
+      return;
+    }
+    
     if (audio.paused) {
       audio
         .play()
@@ -76,9 +107,12 @@ export const MusicProvider = ({ children }) => {
     }
   };
 
-  // next track
   const nextTrack = () => {
-    if (queue.length === 0) return;
+    if (queue.length === 0) {
+      console.warn("Queue is empty");
+      return;
+    }
+    
     const nextIndex = (currentIndex + 1) % queue.length;
     const next = queue[nextIndex];
     setCurrentIndex(nextIndex);
@@ -88,15 +122,23 @@ export const MusicProvider = ({ children }) => {
     audio.pause();
     audio.src = proxify(next.previewUrl);
     audio.currentTime = 0;
+    audio.load();
+    
     audio
       .play()
       .then(() => setIsPlaying(true))
-      .catch(() => setIsPlaying(false));
+      .catch((err) => {
+        console.warn("Next track play failed:", err);
+        setIsPlaying(false);
+      });
   };
 
-  // previous track
   const prevTrack = () => {
-    if (queue.length === 0) return;
+    if (queue.length === 0) {
+      console.warn("Queue is empty");
+      return;
+    }
+    
     const prevIndex = (currentIndex - 1 + queue.length) % queue.length;
     const prev = queue[prevIndex];
     setCurrentIndex(prevIndex);
@@ -106,13 +148,17 @@ export const MusicProvider = ({ children }) => {
     audio.pause();
     audio.src = proxify(prev.previewUrl);
     audio.currentTime = 0;
+    audio.load();
+    
     audio
       .play()
       .then(() => setIsPlaying(true))
-      .catch(() => setIsPlaying(false));
+      .catch((err) => {
+        console.warn("Previous track play failed:", err);
+        setIsPlaying(false);
+      });
   };
 
-  // like/unlike
   const toggleLikeSong = (song) => {
     const exists = likedSongs.find((s) => s.trackId === song.trackId);
     const updated = exists
@@ -121,11 +167,13 @@ export const MusicProvider = ({ children }) => {
     setLikedSongs(updated);
   };
 
-  // playlist management
   const createPlaylist = (name) => {
     if (!name?.trim()) return;
     const exists = playlists.find((p) => p.name.toLowerCase() === name.toLowerCase());
-    if (exists) return;
+    if (exists) {
+      console.warn("Playlist already exists:", name);
+      return;
+    }
     const newPlaylist = { name, tracks: [] };
     setPlaylists([...playlists, newPlaylist]);
   };
@@ -147,45 +195,65 @@ export const MusicProvider = ({ children }) => {
     setPlaylists(updated);
   };
 
-  // save lists to localStorage
   useEffect(() => {
-    localStorage.setItem("playlists", JSON.stringify(playlists));
+    try {
+      localStorage.setItem("playlists", JSON.stringify(playlists));
+    } catch (error) {
+      console.warn("Could not save playlists:", error);
+    }
   }, [playlists]);
 
   useEffect(() => {
-    localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
+    try {
+      localStorage.setItem("likedSongs", JSON.stringify(likedSongs));
+    } catch (error) {
+      console.warn("Could not save liked songs:", error);
+    }
   }, [likedSongs]);
 
-  // sync audio element events to context state (timeupdate, duration, ended)
   useEffect(() => {
     const audio = audioRef.current;
 
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
-      setDuration(audio.duration || 0);
+      if (audio.duration && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
     };
+    
     const onLoadedMetadata = () => {
-      setDuration(audio.duration || 0);
+      if (audio.duration && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
     };
+    
     const onEnded = () => {
-      // auto next
-      if (queue.length > 0) nextTrack();
-      else setIsPlaying(false);
+      if (queue.length > 0) {
+        nextTrack();
+      } else {
+        setIsPlaying(false);
+      }
+    };
+
+    const onError = (e) => {
+      console.error("Audio error:", e);
+      setIsPlaying(false);
     };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
+    audio.addEventListener("error", onError);
 
     return () => {
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("error", onError);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queue, currentIndex]);
 
-  // clean up on unmount
   useEffect(() => {
     const audio = audioRef.current;
     return () => {
@@ -194,12 +262,12 @@ export const MusicProvider = ({ children }) => {
     };
   }, []);
 
-  // seek function
   const seekAudio = (time) => {
     const audio = audioRef.current;
     if (!isNaN(time) && audio.src) {
-      audio.currentTime = Math.max(0, Math.min(time, audio.duration || time));
-      setCurrentTime(audio.currentTime);
+      const seekTime = Math.max(0, Math.min(time, audio.duration || time));
+      audio.currentTime = seekTime;
+      setCurrentTime(seekTime);
     }
   };
 
@@ -215,13 +283,15 @@ export const MusicProvider = ({ children }) => {
         nextTrack,
         prevTrack,
         seekAudio,
-        audioRef, // exposed in case you want to directly access it (optional)
+        audioRef,
         playlists,
         likedSongs,
         toggleLikeSong,
         createPlaylist,
         deletePlaylist,
         addToPlaylist,
+        queue,
+        currentIndex,
       }}
     >
       {children}

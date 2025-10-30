@@ -18,16 +18,20 @@ export default function Home() {
     fetchSongs();
   }, []);
 
+  const handlePlay = (song) => {
+    playTrack(song, songs);
+  };
+
   return (
     <div className="text-light" style={{ paddingTop: "80px" }}>
-      {/* 🎵 Carousel Section */}
+      {/* Carousel Section */}
       <Carousel fade interval={3000} className="mb-5 rounded shadow">
         {songs.slice(0, 5).map((song, index) => (
           <Carousel.Item key={index}>
             <div
               style={{
                 position: "relative",
-                height: "400px", // 🔹 Reduced height from 400px to 250px
+                height: "400px",
                 width: "100%",
                 backgroundSize: "contain",
                 backgroundRepeat:"no-repeat",
@@ -38,7 +42,9 @@ export default function Home() {
                   "100x100bb",
                   "1000x1000bb"
                 )})`,
+                cursor: "pointer",
               }}
+              onClick={() => handlePlay(song)}
             >
               <div
                 style={{
@@ -59,9 +65,9 @@ export default function Home() {
         ))}
       </Carousel>
 
-      {/* 🔥 Trending Songs */}
+      {/* Trending Songs */}
       <h3 className="mb-4">🔥 Trending Songs</h3>
-      <SongList songs={songs} onPlay={playTrack} />
+      <SongList songs={songs} onPlay={handlePlay} />
     </div>
   );
 }

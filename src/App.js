@@ -1,62 +1,118 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-
 import { MusicProvider } from "./context/MusicContext";
+import { AuthProvider } from "./context/AuthContext";
 import AppNavbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Player from "./components/Player";
-
 import Home from "./pages/Home";
-import Search from "./pages/Search";
 import Library from "./pages/Library";
-import Liked from "./pages/LikedSongs";
+import LikedSongs from "./pages/LikedSongs";
+import PlaylistPage from "./pages/PlaylistPage";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import "./App.css";
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <MusicProvider>
-      <Router>
-        <div
-          className="app-container"
-          style={{
-            backgroundColor: "#121212",
-            minHeight: "100vh",
-            color: "white",
-            overflowX: "hidden",
-            
-          }}
-        >
-          {/* Top Navbar */}
-          <AppNavbar />
+    <AuthProvider>
+      <MusicProvider>
+        <Router>
+          <Routes>
+            {/* Auth Routes - Full Screen */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          <div className="d-flex">
-            {/* Sidebar */}
-            <div className="d-none py-5 d-md-block">
-              <Sidebar />
-            </div>
+            {/* Main App Routes */}
+            <Route
+              path="/*"
+              element={
+                <div className="d-flex">
+                  {/* Sidebar - Always visible on desktop, toggle on mobile */}
+                  <div
+                    className="d-none d-lg-block"
+                    style={{
+                      position: "fixed",
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      width: "250px",
+                      zIndex: 1040,
+                    }}
+                  >
+                    <Sidebar />
+                  </div>
 
-            {/* Main Content Area */}
-            <div
-              className="flex-grow-1 p-4"
-              style={{
-                marginLeft: "220px",
-                paddingBottom: "100px", // space for bottom player
-              }}
-            >
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/liked" element={<Liked />} />
-              </Routes>
-            </div>
-          </div>
+                  {/* Mobile Sidebar (toggled) */}
+                  <div
+                    className={`d-lg-none`}
+                    style={{
+                      position: "fixed",
+                      left: sidebarOpen ? 0 : "-250px",
+                      top: 0,
+                      bottom: 0,
+                      width: "250px",
+                      transition: "left 0.3s ease",
+                      zIndex: 1040,
+                    }}
+                  >
+                    <Sidebar />
+                  </div>
 
-          {/* Bottom Music Player */}
+                  {/* Overlay for mobile when sidebar is open */}
+                  {sidebarOpen && (
+                    <div
+                      className="sidebar-overlay d-lg-none"
+                      onClick={toggleSidebar}
+                      style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        zIndex: 1030,
+                      }}
+                    />
+                  )}
+
+                  {/* Main Content */}
+                  <div
+                    style={{
+                      marginLeft: "202px",
+                      paddingBottom: "120px",
+                      minHeight: "100vh",
+                    }}
+                  >
+                    {/* Navbar */}
+                    <AppNavbar onToggleSidebar={toggleSidebar} />
+
+                    {/* Page Content */}
+                    <div className="container-fluid bg-black px-4" style={{ paddingTop: "80px" }}>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/library" element={<Library />} />
+                        <Route path="/liked" element={<LikedSongs />} />
+                        <Route path="/playlist/:name" element={<PlaylistPage />} />
+                      </Routes>
+                    </div>
+                  </div>
+                </div>
+              }
+            />
+          </Routes>
+
+          {/* Bottom Player */}
           <Player />
-        </div>
-      </Router>
-    </MusicProvider>
+        </Router>
+      </MusicProvider>
+    </AuthProvider>
   );
 }
 

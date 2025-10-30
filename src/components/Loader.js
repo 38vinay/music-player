@@ -36,7 +36,7 @@ const SongList = ({ songs, onPlay }) => {
       <div
         className="row justify-content-start"
         style={{
-          marginTop: "10px", // spacing for top area
+          marginTop: "10px",
         }}
       >
         {songs.map((song) => (
@@ -44,7 +44,7 @@ const SongList = ({ songs, onPlay }) => {
             className="col-6 col-sm-4 col-md-3 col-lg-2"
             key={song.trackId}
             style={{
-              padding: "10px", // ✅ Adds spacing *around each card*
+              padding: "10px",
             }}
           >
             <div
@@ -64,9 +64,10 @@ const SongList = ({ songs, onPlay }) => {
                   width: "100%",
                   height: "240px",
                   borderRadius: "8px",
-              
                   transition: "transform 0.3s ease",
+                  cursor: "pointer",
                 }}
+                onClick={() => onPlay(song)}
               />
 
               <div className="card-body text-center p-2">
@@ -85,6 +86,7 @@ const SongList = ({ songs, onPlay }) => {
                     className="btn btn-outline-success btn-sm"
                     style={{ padding: "2px 6px", fontSize: "0.8rem" }}
                     onClick={() => onPlay(song)}
+                    title="Play"
                   >
                     ▶
                   </button>
@@ -93,6 +95,7 @@ const SongList = ({ songs, onPlay }) => {
                     className="btn btn-outline-light btn-sm"
                     style={{ padding: "2px 6px" }}
                     onClick={() => handleLikeClick(song)}
+                    title={likedSongs.some((s) => s.trackId === song.trackId) ? "Unlike" : "Like"}
                   >
                     <FaHeart
                       className={
@@ -107,6 +110,7 @@ const SongList = ({ songs, onPlay }) => {
                     className="btn btn-outline-light btn-sm"
                     style={{ padding: "2px 6px" }}
                     onClick={() => handleAddClick(song)}
+                    title="Add to Playlist"
                   >
                     <FaPlus />
                   </button>
@@ -117,7 +121,6 @@ const SongList = ({ songs, onPlay }) => {
         ))}
       </div>
 
-      {/* Add To Playlist Modal */}
       <AddToPlaylistModal
         show={showModal}
         handleClose={() => setShowModal(false)}
@@ -125,7 +128,6 @@ const SongList = ({ songs, onPlay }) => {
         onAdded={handlePlaylistAdd}
       />
 
-      {/* Toast Notifications */}
       <ToastManager
         message={toastMsg}
         show={showToast}

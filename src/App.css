@@ -1,22 +1,94 @@
+/* Ensure body background is dark */
 body {
   background-color: #121212;
-  color: white;
-  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
+/* Sidebar styles */
 .sidebar {
-  width: 200px;
+  background-color: #000;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.player-bar {
-  height: 80px;
-  border-top: 1px solid #282828;
+/* Sidebar scrollbar styling */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
 }
 
-.card {
-  transition: transform 0.2s ease;
+.sidebar::-webkit-scrollbar-track {
+  background: #000;
 }
-.card:hover {
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .main-content {
+    margin-left: 0 !important;
+  }
+}
+
+/* Nav link hover effects */
+.sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Song card hover effect */
+.song-card:hover {
   transform: scale(1.05);
-  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.song-card img:hover {
+  transform: scale(1.1);
+}
+
+/* Modal custom styles */
+.search-modal .modal-content {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.search-modal .modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.search-modal .modal-body::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+.search-modal .modal-body::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px;
+}
+
+.search-modal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Ensure carousel items have proper sizing */
+.carousel-item {
+  background-color: #000;
+}
+
+/* Player z-index fix */
+.fixed-bottom {
+  z-index: 1050;
+}
+
+/* Dropdown menu hover effects */
+.dropdown-item:hover {
+  background-color: rgba(29, 185, 84, 0.2) !important;
 }

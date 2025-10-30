@@ -7,11 +7,17 @@ export default function Library() {
   const { playlists, playTrack, deletePlaylist } = useContext(MusicContext);
   const [showModal, setShowModal] = useState(false);
 
+  const handlePlay = (song, playlistTracks) => {
+    playTrack(song, playlistTracks);
+  };
+
   return (
     <div className="text-light">
       <div className="d-flex justify-content-between align-items-center mt-5 mb-3">
         <h3>🎶 Your Library</h3>
-        <Button variant="success" onClick={() => setShowModal(true)}>+ Create Playlist</Button>
+        <Button variant="success" onClick={() => setShowModal(true)}>
+          + Create Playlist
+        </Button>
       </div>
 
       {playlists.length === 0 ? (
@@ -33,7 +39,7 @@ export default function Library() {
                   <div key={song.trackId} className="col-md-3 mb-3">
                     <div
                       className="card bg-secondary text-light h-100"
-                      onClick={() => playTrack(song)}
+                      onClick={() => handlePlay(song, p.tracks)}
                       style={{ cursor: "pointer" }}
                     >
                       <img
@@ -45,7 +51,6 @@ export default function Library() {
                           width: "100%",
                           height: "240px",
                           borderRadius: "8px",
-
                           transition: "transform 0.3s ease",
                         }}
                       />
