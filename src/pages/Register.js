@@ -78,7 +78,7 @@ export default function Register() {
             <div className="text-center mb-4">
               <FaMusic size={50} className="text-success mb-3" />
               <h2 className="text-white fw-bold mb-2">Create Account</h2>
-              <p className="text-muted">Join us and start your music journey</p>
+              <p className="text-light">Join us and start your music journey</p>
             </div>
 
             {error && (
@@ -140,7 +140,7 @@ export default function Register() {
                     padding: "12px",
                   }}
                 />
-                <Form.Text className="text-muted">
+                <Form.Text className="text-light">
                   Must be at least 6 characters
                 </Form.Text>
               </Form.Group>
@@ -181,7 +181,7 @@ export default function Register() {
             </Form>
 
             <div className="text-center mt-4">
-              <p className="text-muted mb-0">
+              <p className="text-light mb-0">
                 Already have an account?{" "}
                 <Link
                   to="/login"
@@ -196,7 +196,7 @@ export default function Register() {
             <div className="text-center mt-3">
               <Link
                 to="/"
-                className="text-muted"
+                className="text-light"
                 style={{ textDecoration: "none", fontSize: "0.9rem" }}
               >
                 Continue as Guest →

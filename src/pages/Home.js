@@ -13,7 +13,7 @@ export default function Home() {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://itunes.apple.com/search?term=honeysingh&entity=song&limit=50"
+          "https://itunes.apple.com/search?term=trending&entity=song&limit=101"
         );
         const data = await res.json();
         setSongs(data.results);
@@ -33,7 +33,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="loading-container">
-        <div className="spinner-border text-success" role="status">
+        <div className="spinner-border text-info" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
         <p className="mt-3 text-muted">Loading music...</p>
@@ -76,7 +76,7 @@ export default function Home() {
       {/* Trending Songs Section */}
       <div className="trending-section">
         <div className="section-header">
-          <h3 className="section-title">🔥 Trending Songs</h3>
+          <h3 className="section-title ">🔥 Trending Songs</h3>
           <p className="section-subtitle">Discover the hottest tracks right now</p>
         </div>
         <SongList songs={songs} onPlay={handlePlay} />
@@ -127,7 +127,7 @@ export default function Home() {
           inset: 0;
           background: linear-gradient(
             to top,
-            rgba(0, 0, 0, 0.9) 0%,
+            rgba(101, 67, 67, 0.9) 0%,
             rgba(0, 0, 0, 0.6) 50%,
             rgba(0, 0, 0, 0.3) 100%
           );

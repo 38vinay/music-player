@@ -64,7 +64,7 @@ export default function Login() {
             <div className="text-center mb-4">
               <FaMusic size={50} className="text-success mb-3" />
               <h2 className="text-white fw-bold mb-2">Welcome Back</h2>
-              <p className="text-muted">Login to continue your music journey</p>
+              <p className="text-light">Login to continue your music journey</p>
             </div>
 
             {error && (
@@ -127,18 +127,10 @@ export default function Login() {
               </Button>
             </Form>
 
-            <div className="mt-4 p-3 bg-dark rounded">
-              <small className="text-muted d-block mb-2">
-                <strong>Demo Credentials:</strong>
-              </small>
-              <small className="text-light d-block">
-                Email: demo@music.com
-              </small>
-              <small className="text-light d-block">Password: demo123</small>
-            </div>
+           
 
             <div className="text-center mt-4">
-              <p className="text-muted mb-0">
+              <p className="text-light mb-0">
                 Don't have an account?{" "}
                 <Link
                   to="/register"
@@ -153,7 +145,7 @@ export default function Login() {
             <div className="text-center mt-3">
               <Link
                 to="/"
-                className="text-muted"
+                className="text-light"
                 style={{ textDecoration: "none", fontSize: "0.9rem" }}
               >
                 Continue as Guest →
