@@ -13,7 +13,7 @@ export default function Home() {
       try {
         setLoading(true);
         const res = await fetch(
-          "https://itunes.apple.com/search?term=trending&entity=song&limit=50"
+          "https://itunes.apple.com/search?term=honeysingh&entity=song&limit=50"
         );
         const data = await res.json();
         setSongs(data.results);
