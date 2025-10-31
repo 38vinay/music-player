@@ -33,72 +33,34 @@ function App() {
             <Route
               path="/*"
               element={
-                <div className="d-flex">
-                  {/* Sidebar - Always visible on desktop, toggle on mobile */}
-                  <div
-                    className="d-none d-lg-block"
-                    style={{
-                      position: "fixed",
-                      left: 0,
-                      marginTop:"70px",
-                      top: 0,
-                      bottom: 0,
-                      width: "100px",
-                      zIndex: 1040,
-                    }}
-                  >
+                <div className="app-container">
+                  {/* Desktop Sidebar */}
+                  <div className="sidebar-desktop">
                     <Sidebar />
                   </div>
 
-                  {/* Mobile Sidebar (toggled) */}
+                  {/* Mobile Sidebar with overlay */}
                   <div
-                    className={`d-lg-none`}
-                    style={{
-                      position: "fixed",
-                      left: sidebarOpen ? 0 : "-250px",
-                      top: 0,
-                      bottom: 0,
-                      width: "250px",
-                      transition: "left 0.3s ease",
-                      zIndex: 1040,
-                    }}
+                    className={`sidebar-mobile ${sidebarOpen ? "open" : ""}`}
                   >
-                    <Sidebar />
+                    <Sidebar onClose={() => setSidebarOpen(false)} />
                   </div>
 
-                  {/* Overlay for mobile when sidebar is open */}
+                  {/* Overlay for mobile */}
                   {sidebarOpen && (
                     <div
-                      className="sidebar-overlay d-lg-none"
+                      className="sidebar-overlay"
                       onClick={toggleSidebar}
-                      style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        zIndex: 1030,
-                      }}
                     />
                   )}
 
-                  {/* Main Content */}
-                  <div
-                    style={{
-                      marginLeft: "250px",
-                      paddingTop:"20px",
-                      paddingBottom: "120px",
-                      width:"100%",
-                      height:"100vh",
-                      background:"black",
-                    }}
-                  >
+                  {/* Main Content Area */}
+                  <div className="main-content">
                     {/* Navbar */}
                     <AppNavbar onToggleSidebar={toggleSidebar} />
 
                     {/* Page Content */}
-                    <div className="container-fluid bg-black px-4" style={{ paddingTop: "80px" }}>
+                    <div className="page-content">
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/library" element={<Library />} />
@@ -107,13 +69,13 @@ function App() {
                       </Routes>
                     </div>
                   </div>
+
+                  {/* Bottom Player */}
+                  <Player />
                 </div>
               }
             />
           </Routes>
-
-          {/* Bottom Player */}
-          <Player />
         </Router>
       </MusicProvider>
     </AuthProvider>

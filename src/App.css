@@ -1,94 +1,293 @@
-/* Ensure body background is dark */
-body {
-  background-color: #121212;
-  color: #fff;
+/* Global Styles */
+* {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
-/* Sidebar styles */
-.sidebar {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #000;
-  height: 100vh;
-  overflow-y: auto;
+  color: #fff;
   overflow-x: hidden;
 }
 
-/* Sidebar scrollbar styling */
-.sidebar::-webkit-scrollbar {
-  width: 8px;
+/* App Container */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000;
+  position: relative;
 }
 
-.sidebar::-webkit-scrollbar-track {
-  background: #000;
+/* Desktop Sidebar */
+.sidebar-desktop {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 250px;
+  z-index: 1040;
+  background-color: #000;
+  border-right: 1px solid #282828;
+  overflow-y: auto;
+  transition: transform 0.3s ease;
 }
 
-.sidebar::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Responsive adjustments */
-@media (max-width: 991.98px) {
-  .main-content {
-    margin-left: 0 !important;
+/* Hide desktop sidebar on mobile */
+@media (max-width: 991px) {
+  .sidebar-desktop {
+    display: none;
   }
 }
 
-/* Nav link hover effects */
-.sidebar .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Song card hover effect */
-.song-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-
-.song-card img:hover {
-  transform: scale(1.1);
-}
-
-/* Modal custom styles */
-.search-modal .modal-content {
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-}
-
-.search-modal .modal-body::-webkit-scrollbar {
-  width: 10px;
-}
-
-.search-modal .modal-body::-webkit-scrollbar-track {
-  background: #1a1a1a;
-}
-
-.search-modal .modal-body::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 5px;
-}
-
-.search-modal .modal-body::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Ensure carousel items have proper sizing */
-.carousel-item {
-  background-color: #000;
-}
-
-/* Player z-index fix */
-.fixed-bottom {
+/* Mobile Sidebar */
+.sidebar-mobile {
+  position: fixed;
+  left: -250px;
+  top: 0;
+  bottom: 0;
+  width: 250px;
   z-index: 1050;
+  background-color: #000;
+  border-right: 1px solid #282828;
+  overflow-y: auto;
+  transition: left 0.3s ease;
 }
 
-/* Dropdown menu hover effects */
-.dropdown-item:hover {
-  background-color: rgba(29, 185, 84, 0.2) !important;
+.sidebar-mobile.open {
+  left: 0;
+}
+
+/* Hide mobile sidebar on desktop */
+@media (min-width: 992px) {
+  .sidebar-mobile {
+    display: none;
+  }
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1045;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a1a 0%, #000 100%);
+}
+
+@media (max-width: 991px) {
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Page Content */
+.page-content {
+  padding: 80px 20px 20px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .page-content {
+    padding: 70px 15px 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-content {
+    padding: 65px 10px 10px;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #282828;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3e3e3e;
+}
+
+/* Card Hover Effects */
+.song-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.song-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(29, 185, 84, 0.3);
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 1400px) {
+  .col-lg-2 {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 992px) {
+  .col-md-3 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+@media (max-width: 768px) {
+  .col-sm-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 576px) {
+  .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+/* Button Responsiveness */
+@media (max-width: 576px) {
+  .btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Modal Responsiveness */
+@media (max-width: 576px) {
+  .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .modal-content {
+    border-radius: 15px;
+  }
+}
+
+/* Carousel Responsiveness */
+@media (max-width: 768px) {
+  .carousel-item > div {
+    height: 300px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-item > div {
+    height: 250px !important;
+  }
+}
+
+/* Text Responsiveness */
+@media (max-width: 768px) {
+  h3 {
+    font-size: 1.5rem;
+  }
+  
+  h5 {
+    font-size: 1.1rem;
+  }
+  
+  h6 {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  h5 {
+    font-size: 1rem;
+  }
+}
+
+/* Player Responsiveness */
+@media (max-width: 768px) {
+  .fixed-bottom {
+    padding: 0.75rem 1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .fixed-bottom {
+    padding: 0.5rem 0.75rem !important;
+  }
+}
+
+/* Utility Classes */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Loading Animation */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.3em;
+}
+
+@media (max-width: 576px) {
+  .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 0.2em;
+  }
 }

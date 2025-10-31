@@ -40,94 +40,56 @@ export default function Player() {
 
   if (!currentTrack) {
     return (
-      <div
-        className="fixed-bottom bg-dark text-white d-flex align-items-center justify-content-center px-4 py-3"
-        style={{
-          borderTop: "1px solid #333",
-          boxShadow: "0 -2px 10px rgba(0,0,0,0.6)",
-          zIndex: 1050,
-        }}
-      >
+      <div className="player-container no-track">
         <p className="text-muted mb-0">No track playing</p>
       </div>
     );
   }
 
   return (
-    <div
-      className="fixed-bottom bg-dark text-white px-4 py-2"
-      style={{
-        borderTop: "1px solid #333",
-        boxShadow: "0 -2px 10px rgba(0,0,0,0.6)",
-        zIndex: 1050,
-      }}
-    >
+    <div className="player-container">
       {/* Progress Bar */}
-      <div className="w-100 d-flex align-items-center mb-2">
-        <small className="text-muted" style={{ width: "50px", textAlign: "left" }}>
-          {formatTime(currentTime)}
-        </small>
+      <div className="progress-bar-container">
+        <span className="time-display">{formatTime(currentTime)}</span>
         <input
           type="range"
           min="0"
           max="100"
           value={progress}
           onChange={handleSeek}
-          className="flex-grow-1 mx-2"
-          style={{
-            accentColor: "#1DB954",
-            cursor: "pointer",
-            height: "4px",
-          }}
+          className="progress-bar"
         />
-        <small className="text-muted" style={{ width: "50px", textAlign: "right" }}>
-          {formatTime(duration)}
-        </small>
+        <span className="time-display">{formatTime(duration)}</span>
       </div>
 
-      {/* Controls */}
-      <div className="d-flex align-items-center justify-content-between w-100">
+      {/* Main Player Controls */}
+      <div className="player-controls">
         {/* Left: Song Info */}
-        <div className="d-flex align-items-center" style={{ minWidth: "200px", maxWidth: "30%" }}>
+        <div className="song-info">
           <img
             src={currentTrack.artworkUrl100 || "/placeholder.png"}
             alt={currentTrack.trackName}
-            style={{
-              width: 55,
-              height: 55,
-              borderRadius: 8,
-              marginRight: 12,
-              objectFit: "cover",
-            }}
+            className="song-artwork"
             onError={(e) => {
               e.target.src = "https://via.placeholder.com/100?text=No+Image";
             }}
           />
-          <div style={{ overflow: "hidden" }}>
-            <div
-              className="fw-bold text-truncate"
-              style={{ fontSize: "0.95rem", maxWidth: "200px" }}
-              title={currentTrack.trackName}
-            >
+          <div className="song-details">
+            <div className="song-title" title={currentTrack.trackName}>
               {currentTrack.trackName}
             </div>
-            <div
-              className="text-muted text-truncate"
-              style={{ fontSize: "0.85rem", maxWidth: "200px" }}
-              title={currentTrack.artistName}
-            >
+            <div className="song-artist" title={currentTrack.artistName}>
               {currentTrack.artistName}
             </div>
           </div>
         </div>
 
-        {/* Center Controls */}
-        <div className="d-flex align-items-center gap-2">
+        {/* Center: Controls */}
+        <div className="control-buttons">
           <Button
             variant="outline-light"
             onClick={prevTrack}
-            className="rounded-circle d-flex align-items-center justify-content-center"
-            style={{ width: 38, height: 38, border: "1px solid #555" }}
+            className="control-btn control-btn-prev"
             title="Previous Track"
           >
             <SkipStartFill size={18} />
@@ -135,13 +97,7 @@ export default function Player() {
 
           <Button
             onClick={togglePlay}
-            className="rounded-circle d-flex align-items-center justify-content-center"
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: "#1DB954",
-              border: "none",
-            }}
+            className="control-btn control-btn-play"
             title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
@@ -154,17 +110,300 @@ export default function Player() {
           <Button
             variant="outline-light"
             onClick={nextTrack}
-            className="rounded-circle d-flex align-items-center justify-content-center"
-            style={{ width: 38, height: 38, border: "1px solid #555" }}
+            className="control-btn control-btn-next"
             title="Next Track"
           >
             <SkipEndFill size={18} />
           </Button>
         </div>
 
-        {/* Right Spacer */}
-        <div style={{ minWidth: "200px", maxWidth: "30%" }} />
+        {/* Right: Spacer for desktop alignment */}
+        <div className="right-spacer" />
       </div>
+
+      <style jsx>{`
+        .player-container {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(180deg, #181818 0%, #000 100%);
+          border-top: 1px solid #282828;
+          box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.8);
+          z-index: 1050;
+          padding: 12px 20px;
+        }
+
+        .player-container.no-track {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+
+        .progress-bar-container {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+        }
+
+        .time-display {
+          color: #b3b3b3;
+          font-size: 0.75rem;
+          min-width: 40px;
+          text-align: center;
+        }
+
+        .progress-bar {
+          flex: 1;
+          height: 4px;
+          -webkit-appearance: none;
+          appearance: none;
+          background: #404040;
+          border-radius: 2px;
+          outline: none;
+          cursor: pointer;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 12px;
+          height: 12px;
+          background: #1DB954;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .progress-bar::-webkit-slider-thumb:hover {
+          background: #1ed760;
+          transform: scale(1.2);
+        }
+
+        .progress-bar::-moz-range-thumb {
+          width: 12px;
+          height: 12px;
+          background: #1DB954;
+          border-radius: 50%;
+          cursor: pointer;
+          border: none;
+        }
+
+        .player-controls {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 20px;
+        }
+
+        .song-info {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 1;
+          min-width: 0;
+          max-width: 300px;
+        }
+
+        .song-artwork {
+          width: 50px;
+          height: 50px;
+          border-radius: 8px;
+          object-fit: cover;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .song-details {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .song-title {
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: #fff;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .song-artist {
+          font-size: 0.8rem;
+          color: #b3b3b3;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .control-buttons {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex: 0 0 auto;
+        }
+
+        .control-btn {
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          transition: all 0.2s ease;
+        }
+
+        .control-btn-prev,
+        .control-btn-next {
+          width: 36px;
+          height: 36px;
+          background-color: transparent;
+          border: 1px solid #404040;
+          color: #fff;
+        }
+
+        .control-btn-prev:hover,
+        .control-btn-next:hover {
+          background-color: #282828;
+          border-color: #fff;
+          transform: scale(1.1);
+        }
+
+        .control-btn-play {
+          width: 48px;
+          height: 48px;
+          background-color: #1DB954;
+        }
+
+        .control-btn-play:hover {
+          background-color: #1ed760;
+          transform: scale(1.1);
+        }
+
+        .right-spacer {
+          flex: 1;
+          max-width: 300px;
+        }
+
+        /* Tablet Styles */
+        @media (max-width: 992px) {
+          .right-spacer {
+            display: none;
+          }
+
+          .song-info {
+            max-width: 250px;
+          }
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+          .player-container {
+            padding: 10px 15px;
+          }
+
+          .progress-bar-container {
+            gap: 8px;
+            margin-bottom: 10px;
+          }
+
+          .time-display {
+            font-size: 0.7rem;
+            min-width: 35px;
+          }
+
+          .song-info {
+            max-width: 150px;
+          }
+
+          .song-artwork {
+            width: 45px;
+            height: 45px;
+          }
+
+          .song-title {
+            font-size: 0.85rem;
+          }
+
+          .song-artist {
+            font-size: 0.75rem;
+          }
+
+          .control-buttons {
+            gap: 10px;
+          }
+
+          .control-btn-prev,
+          .control-btn-next {
+            width: 32px;
+            height: 32px;
+          }
+
+          .control-btn-play {
+            width: 44px;
+            height: 44px;
+          }
+        }
+
+        /* Small Mobile Styles */
+        @media (max-width: 576px) {
+          .player-container {
+            padding: 8px 10px;
+          }
+
+          .progress-bar-container {
+            gap: 6px;
+            margin-bottom: 8px;
+          }
+
+          .time-display {
+            font-size: 0.65rem;
+            min-width: 30px;
+          }
+
+          .song-info {
+            max-width: 120px;
+            gap: 8px;
+          }
+
+          .song-artwork {
+            width: 40px;
+            height: 40px;
+          }
+
+          .song-title {
+            font-size: 0.8rem;
+          }
+
+          .song-artist {
+            font-size: 0.7rem;
+          }
+
+          .control-buttons {
+            gap: 8px;
+          }
+
+          .control-btn-prev,
+          .control-btn-next {
+            width: 30px;
+            height: 30px;
+          }
+
+          .control-btn-prev svg,
+          .control-btn-next svg {
+            font-size: 14px;
+          }
+
+          .control-btn-play {
+            width: 40px;
+            height: 40px;
+          }
+
+          .control-btn-play svg {
+            font-size: 22px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

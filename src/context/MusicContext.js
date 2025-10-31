@@ -195,6 +195,20 @@ export const MusicProvider = ({ children }) => {
     setPlaylists(updated);
   };
 
+  // NEW: Remove song from playlist
+  const removeFromPlaylist = (playlistName, songId) => {
+    const updated = playlists.map((p) => {
+      if (p.name === playlistName) {
+        return {
+          ...p,
+          tracks: p.tracks.filter((s) => s.trackId !== songId)
+        };
+      }
+      return p;
+    });
+    setPlaylists(updated);
+  };
+
   useEffect(() => {
     try {
       localStorage.setItem("playlists", JSON.stringify(playlists));
@@ -290,6 +304,7 @@ export const MusicProvider = ({ children }) => {
         createPlaylist,
         deletePlaylist,
         addToPlaylist,
+        removeFromPlaylist, // NEW: Export the function
         queue,
         currentIndex,
       }}

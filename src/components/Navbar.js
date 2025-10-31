@@ -14,7 +14,6 @@ import { MusicContext } from "../context/MusicContext";
 import { AuthContext } from "../context/AuthContext";
 import SongList from "../components/Loader";
 import { searchMusic } from "../utils/api";
-import logo from "../assets/logo.svg";
 
 export default function AppNavbar({ onToggleSidebar }) {
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -58,109 +57,89 @@ export default function AppNavbar({ onToggleSidebar }) {
     <>
       <Navbar
         expand="lg"
-        bg="black"
         variant="dark"
         fixed="top"
-        className="px-3 py-2 shadow-sm"
-        style={{
-          borderBottom: "1px solid #222",
-          zIndex: 1050,
-        }}
+        className="custom-navbar"
       >
-        <Container fluid className="d-flex align-items-center justify-content-between">
-          {/* Sidebar Toggle Button (mobile view) */}
-          <Button
-            variant="link"
-            className="text-light d-lg-none me-2"
-            onClick={onToggleSidebar}
-            style={{ fontSize: "1.4rem" }}
-          >
-            <FaBars />
-          </Button>
-
-          {/* Logo */}
+        <Container fluid className="px-3">
+          {/* Left Section - Menu & Logo */}
           <div className="d-flex align-items-center">
-            <img src={logo} alt="Logo" width={160} className="me-2" />
+            {/* Mobile Menu Toggle */}
+            <Button
+              variant="link"
+              className="text-light d-lg-none me-2 p-0"
+              onClick={onToggleSidebar}
+              style={{ fontSize: "1.5rem" }}
+            >
+              <FaBars />
+            </Button>
+
+            {/* Logo - Show on mobile, hide on desktop */}
+            <div className="d-lg-none">
+              <h5 className="text-success fw-bold mb-0">🎵 Music</h5>
+            </div>
           </div>
 
-          {/* Search Bar */}
-          <Form className="d-flex mx-auto" onSubmit={handleSearch}>
-            <FormControl
-              type="search"
-              placeholder="Search songs, artists..."
-              name="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="me-2 bg-dark text-light border-0"
-              style={{
-                width: "280px",
-                borderRadius: "20px",
-                boxShadow: "inset 0 0 5px rgba(255,255,255,0.1)",
-              }}
-            />
-            <Button
-              variant="success"
-              type="submit"
-              className="rounded-circle d-flex align-items-center justify-content-center"
-              style={{ backgroundColor: "#1DB954", border: "none" }}
-            >
-              <FaSearch />
-            </Button>
+          {/* Center Section - Search Bar */}
+          <Form 
+            className="search-form" 
+            onSubmit={handleSearch}
+          >
+            <div className="search-wrapper">
+              <FormControl
+                type="search"
+                placeholder="Search songs, artists..."
+                name="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+              <Button
+                variant="success"
+                type="submit"
+                className="search-button"
+              >
+                <FaSearch />
+              </Button>
+            </div>
           </Form>
 
-          {/* Profile / Right side */}
+          {/* Right Section - Profile */}
           <div className="d-flex align-items-center">
             {isAuthenticated ? (
               <Dropdown align="end">
                 <Dropdown.Toggle
                   variant="dark"
                   id="user-dropdown"
-                  className="d-flex align-items-center"
-                  style={{
-                    backgroundColor: "transparent",
-                    border: "1px solid #333",
-                    borderRadius: "25px",
-                    padding: "8px 15px",
-                  }}
+                  className="user-dropdown-toggle"
                 >
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: "50%",
-                      marginRight: 8,
-                    }}
+                    className="user-avatar"
                   />
-                  <span className="d-none d-md-inline">{user.name}</span>
+                  <span className="user-name d-none d-md-inline">{user.name}</span>
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu
-                  className="bg-dark border-secondary"
-                  style={{ minWidth: "200px" }}
-                >
+                <Dropdown.Menu className="user-dropdown-menu">
                   <Dropdown.Item
-                    className="text-light"
+                    className="dropdown-item-custom"
                     onClick={() => navigate("/liked")}
-                    style={{ backgroundColor: "transparent" }}
                   >
                     <FaHeart className="me-2 text-danger" />
                     Liked Songs
                   </Dropdown.Item>
                   <Dropdown.Item
-                    className="text-light"
+                    className="dropdown-item-custom"
                     onClick={() => navigate("/library")}
-                    style={{ backgroundColor: "transparent" }}
                   >
                     <FaMusic className="me-2 text-success" />
                     Your Library
                   </Dropdown.Item>
                   <Dropdown.Divider className="bg-secondary" />
                   <Dropdown.Item
-                    className="text-danger"
+                    className="dropdown-item-custom text-danger"
                     onClick={logout}
-                    style={{ backgroundColor: "transparent" }}
                   >
                     <FaSignOutAlt className="me-2" />
                     Logout
@@ -171,14 +150,10 @@ export default function AppNavbar({ onToggleSidebar }) {
               <Button
                 variant="outline-success"
                 onClick={() => navigate("/login")}
-                style={{
-                  borderRadius: "25px",
-                  padding: "8px 20px",
-                  fontWeight: "600",
-                }}
+                className="login-button"
               >
-                <FaUser className="me-2" />
-                Login
+                <FaUser className="me-2 d-none d-sm-inline" />
+                <span>Login</span>
               </Button>
             )}
           </div>
@@ -193,24 +168,13 @@ export default function AppNavbar({ onToggleSidebar }) {
         centered
         className="search-modal"
       >
-        <Modal.Header
-          closeButton
-          className="bg-dark text-light border-0"
-          style={{ borderBottom: "1px solid #333" }}
-        >
+        <Modal.Header closeButton className="modal-header-custom">
           <Modal.Title>
             <FaSearch className="me-2" />
             Search Results for "{searchQuery}"
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body
-          className="bg-dark text-light"
-          style={{
-            maxHeight: "70vh",
-            overflowY: "auto",
-            paddingBottom: "20px",
-          }}
-        >
+        <Modal.Body className="modal-body-custom">
           {isSearching ? (
             <div className="text-center py-5">
               <div className="spinner-border text-success" role="status">
@@ -229,12 +193,193 @@ export default function AppNavbar({ onToggleSidebar }) {
             <SongList songs={searchResults} onPlay={handlePlayFromModal} />
           )}
         </Modal.Body>
-        <Modal.Footer className="bg-dark border-0" style={{ borderTop: "1px solid #333" }}>
+        <Modal.Footer className="modal-footer-custom">
           <Button variant="outline-secondary" onClick={handleCloseModal}>
             Close
           </Button>
         </Modal.Footer>
       </Modal>
+
+      <style jsx>{`
+        .custom-navbar {
+          background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.9) 100%);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid #282828;
+          padding: 0.75rem 0;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .search-form {
+          flex: 1;
+          max-width: 500px;
+          margin: 0 auto;
+        }
+
+        .search-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .search-input {
+          flex: 1;
+          background-color: rgba(255,255,255,0.1);
+          border: 1px solid #282828;
+          border-radius: 20px;
+          color: #fff;
+          padding: 10px 20px;
+          transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+          background-color: rgba(255,255,255,0.15);
+          border-color: #1DB954;
+          color: #fff;
+          box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1);
+        }
+
+        .search-input::placeholder {
+          color: #b3b3b3;
+        }
+
+        .search-button {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #1DB954;
+          border: none;
+          padding: 0;
+        }
+
+        .search-button:hover {
+          background-color: #1ed760;
+          transform: scale(1.05);
+        }
+
+        .user-dropdown-toggle {
+          background-color: transparent;
+          border: 1px solid #282828;
+          border-radius: 25px;
+          padding: 6px 15px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          transition: all 0.2s ease;
+        }
+
+        .user-dropdown-toggle:hover {
+          background-color: #282828;
+          border-color: #3e3e3e;
+        }
+
+        .user-avatar {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .user-name {
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        .user-dropdown-menu {
+          background-color: #282828;
+          border: 1px solid #3e3e3e;
+          border-radius: 8px;
+          min-width: 200px;
+          margin-top: 8px;
+        }
+
+        .dropdown-item-custom {
+          color: #fff;
+          padding: 12px 16px;
+          transition: all 0.2s ease;
+        }
+
+        .dropdown-item-custom:hover {
+          background-color: #3e3e3e;
+          color: #fff;
+        }
+
+        .login-button {
+          border-radius: 25px;
+          padding: 8px 20px;
+          font-weight: 600;
+          border: 2px solid #1DB954;
+          transition: all 0.2s ease;
+        }
+
+        .login-button:hover {
+          background-color: #1DB954;
+          transform: translateY(-2px);
+        }
+
+        .modal-header-custom {
+          background-color: #181818;
+          border-bottom: 1px solid #282828;
+          color: #fff;
+        }
+
+        .modal-body-custom {
+          background-color: #121212;
+          color: #fff;
+          max-height: 70vh;
+          overflow-y: auto;
+        }
+
+        .modal-footer-custom {
+          background-color: #181818;
+          border-top: 1px solid #282828;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+          .search-form {
+            max-width: 300px;
+          }
+
+          .search-input {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+          }
+
+          .search-button {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .search-form {
+            max-width: 200px;
+          }
+
+          .search-input {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+          }
+
+          .search-button {
+            width: 32px;
+            height: 32px;
+          }
+
+          .user-avatar {
+            width: 28px;
+            height: 28px;
+          }
+
+          .login-button {
+            padding: 6px 15px;
+            font-size: 0.85rem;
+          }
+        }
+      `}</style>
     </>
   );
 }
