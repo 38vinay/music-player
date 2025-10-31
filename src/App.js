@@ -40,9 +40,10 @@ function App() {
                     style={{
                       position: "fixed",
                       left: 0,
+                      marginTop:"70px",
                       top: 0,
                       bottom: 0,
-                      width: "250px",
+                      width: "100px",
                       zIndex: 1040,
                     }}
                   >
@@ -85,9 +86,12 @@ function App() {
                   {/* Main Content */}
                   <div
                     style={{
-                      marginLeft: "202px",
+                      marginLeft: "250px",
+                      paddingTop:"20px",
                       paddingBottom: "120px",
-                      minHeight: "100vh",
+                      width:"100%",
+                      height:"100vh",
+                      background:"black",
                     }}
                   >
                     {/* Navbar */}

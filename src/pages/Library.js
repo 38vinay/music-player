@@ -21,7 +21,7 @@ export default function Library() {
       </div>
 
       {playlists.length === 0 ? (
-        <p className="text-muted">No playlists yet. Create one!</p>
+        <p className="text-light">No playlists yet. Create one!</p>
       ) : (
         playlists.map((p, idx) => (
           <div key={idx} className="mb-4 p-3 bg-dark rounded">

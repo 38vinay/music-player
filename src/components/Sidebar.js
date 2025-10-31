@@ -72,11 +72,11 @@ export default function Sidebar() {
 
       {/* Playlists Section */}
       <div className="mt-4">
-        <h6 className="text-muted text-uppercase px-3 mb-3" style={{ fontSize: "0.75rem" }}>
+        <h6 className="text-light text-uppercase px-3 mb-3" style={{ fontSize: "0.75rem" }}>
           Playlists
         </h6>
         {playlists.length === 0 ? (
-          <p className="text-muted px-3" style={{ fontSize: "0.85rem" }}>
+          <p className="text-light px-3" style={{ fontSize: "0.85rem" }}>
             No playlists yet
           </p>
         ) : (

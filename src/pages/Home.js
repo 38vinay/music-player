@@ -10,7 +10,7 @@ export default function Home() {
   useEffect(() => {
     const fetchSongs = async () => {
       const res = await fetch(
-        "https://itunes.apple.com/search?term=honeysingh&entity=song&limit=20"
+        "https://itunes.apple.com/search?term=honeysingh&entity=song&limit=100"
       );
       const data = await res.json();
       setSongs(data.results);

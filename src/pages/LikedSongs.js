@@ -9,7 +9,7 @@ export default function Liked() {
   };
 
   return (
-    <div className="text-light">
+    <div className="text-light ">
       <h3 className="mb-4">❤️ Liked Songs</h3>
       {likedSongs.length === 0 ? (
         <p className="text-muted">You haven't liked any songs yet.</p>
