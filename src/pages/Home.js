@@ -62,9 +62,7 @@ export default function Home() {
                   <div className="carousel-content">
                     <h2 className="carousel-title">{song.trackName}</h2>
                     <p className="carousel-artist">{song.artistName}</p>
-                    <button className="carousel-play-btn">
-                      ▶ Play Now
-                    </button>
+                    <button className="carousel-play-btn">▶ Play Now</button>
                   </div>
                 </div>
               </div>
@@ -76,8 +74,10 @@ export default function Home() {
       {/* Trending Songs Section */}
       <div className="trending-section">
         <div className="section-header">
-          <h3 className="section-title ">🔥 Trending Songs</h3>
-          <p className="section-subtitle">Discover the hottest tracks right now</p>
+          <h3 className="section-title">🔥 Trending Songs</h3>
+          <p className="section-subtitle">
+            Discover the hottest tracks right now
+          </p>
         </div>
         <SongList songs={songs} onPlay={handlePlay} />
       </div>
@@ -85,7 +85,7 @@ export default function Home() {
       <style jsx>{`
         .home-container {
           width: 100%;
-          max-width: 100%;
+          overflow-x: hidden;
         }
 
         .loading-container {
@@ -103,17 +103,11 @@ export default function Home() {
           box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
         }
 
-        .hero-carousel {
-          border-radius: 16px;
-          overflow: hidden;
-        }
-
         .carousel-item-custom {
           position: relative;
-          height: 450px;
+          height: clamp(220px, 45vh, 450px);
           background-size: cover;
           background-position: center;
-          background-repeat: no-repeat;
           cursor: pointer;
           transition: transform 0.3s ease;
         }
@@ -127,41 +121,44 @@ export default function Home() {
           inset: 0;
           background: linear-gradient(
             to top,
-            rgba(101, 67, 67, 0.9) 0%,
-            rgba(0, 0, 0, 0.6) 50%,
+            rgba(0, 0, 0, 0.85) 0%,
+            rgba(0, 0, 0, 0.5) 50%,
             rgba(0, 0, 0, 0.3) 100%
           );
           display: flex;
           align-items: flex-end;
-          padding: 40px;
+          justify-content: flex-start;
+          padding: clamp(16px, 5vw, 40px);
         }
 
         .carousel-content {
-          max-width: 600px;
+          max-width: 90%;
         }
 
         .carousel-title {
-          font-size: 2.5rem;
+          font-size: clamp(1.1rem, 4vw, 2.5rem);
           font-weight: 700;
           color: #fff;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
           text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         .carousel-artist {
-          font-size: 1.2rem;
+          font-size: clamp(0.8rem, 2.5vw, 1.2rem);
           color: #b3b3b3;
-          margin-bottom: 20px;
-          text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+          margin-bottom: 16px;
         }
 
         .carousel-play-btn {
-          background-color: #1DB954;
+          background-color: #1db954;
           color: white;
           border: none;
-          padding: 12px 32px;
+          padding: clamp(6px, 1.5vw, 12px) clamp(20px, 4vw, 32px);
           border-radius: 30px;
-          font-size: 1rem;
+          font-size: clamp(0.8rem, 2vw, 1rem);
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -175,170 +172,79 @@ export default function Home() {
         }
 
         .trending-section {
-          margin-top: 40px;
+          margin-top: clamp(24px, 5vw, 40px);
+          padding: 0 10px;
         }
 
         .section-header {
           margin-bottom: 24px;
+          text-align: center;
         }
 
         .section-title {
-          font-size: 2rem;
+          font-size: clamp(1.3rem, 4vw, 2rem);
           font-weight: 700;
           color: #fff;
           margin-bottom: 8px;
         }
 
         .section-subtitle {
-          font-size: 1rem;
+          font-size: clamp(0.8rem, 2vw, 1rem);
           color: #b3b3b3;
           margin: 0;
         }
 
-        /* Tablet Styles */
-        @media (max-width: 992px) {
-          .hero-section {
-            margin-bottom: 30px;
-          }
+       /* Small Mobile Styles */
+@media (max-width: 576px) {
+  .song-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px; /* slight spacing for better balance */
+    justify-items: center;
+  }
 
-          .carousel-item-custom {
-            height: 350px;
-          }
+  .song-card-wrapper {
+    width: 100%;
+  }
 
-          .carousel-gradient {
-            padding: 30px;
-          }
+  .song-card {
+    width: 100%;
+    max-width: 160px; /* optional: ensures even card width */
+  }
 
-          .carousel-title {
-            font-size: 2rem;
-          }
+  .song-card-body {
+    padding: 8px;
+  }
 
-          .carousel-artist {
-            font-size: 1rem;
-          }
+  .song-card-title {
+    font-size: 0.75rem;
+    margin-bottom: 3px;
+  }
 
-          .carousel-play-btn {
-            padding: 10px 28px;
-            font-size: 0.95rem;
-          }
+  .song-card-artist {
+    font-size: 0.65rem;
+    margin-bottom: 6px;
+  }
 
-          .section-title {
-            font-size: 1.75rem;
-          }
+  .song-card-actions {
+    gap: 6px;
+  }
 
-          .section-subtitle {
-            font-size: 0.9rem;
-          }
-        }
+  .action-btn {
+    width: 26px;
+    height: 26px;
+  }
 
-        /* Mobile Styles */
-        @media (max-width: 768px) {
-          .hero-section {
-            margin-bottom: 24px;
-            border-radius: 12px;
-          }
+  .action-btn svg {
+    font-size: 11px;
+  }
 
-          .carousel-item-custom {
-            height: 300px;
-          }
+  .play-button {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
 
-          .carousel-gradient {
-            padding: 24px;
-          }
-
-          .carousel-title {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-          }
-
-          .carousel-artist {
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-          }
-
-          .carousel-play-btn {
-            padding: 8px 24px;
-            font-size: 0.9rem;
-          }
-
-          .trending-section {
-            margin-top: 30px;
-          }
-
-          .section-title {
-            font-size: 1.5rem;
-          }
-
-          .section-subtitle {
-            font-size: 0.85rem;
-          }
-        }
-
-        /* Small Mobile Styles */
-        @media (max-width: 576px) {
-          .hero-section {
-            margin-bottom: 20px;
-            border-radius: 10px;
-          }
-
-          .carousel-item-custom {
-            height: 250px;
-          }
-
-          .carousel-gradient {
-            padding: 20px;
-          }
-
-          .carousel-title {
-            font-size: 1.2rem;
-            margin-bottom: 6px;
-          }
-
-          .carousel-artist {
-            font-size: 0.8rem;
-            margin-bottom: 12px;
-          }
-
-          .carousel-play-btn {
-            padding: 6px 20px;
-            font-size: 0.85rem;
-          }
-
-          .trending-section {
-            margin-top: 24px;
-          }
-
-          .section-header {
-            margin-bottom: 16px;
-          }
-
-          .section-title {
-            font-size: 1.3rem;
-          }
-
-          .section-subtitle {
-            font-size: 0.8rem;
-          }
-        }
-
-        /* Very Small Devices */
-        @media (max-width: 400px) {
-          .carousel-item-custom {
-            height: 220px;
-          }
-
-          .carousel-gradient {
-            padding: 16px;
-          }
-
-          .carousel-title {
-            font-size: 1.1rem;
-          }
-
-          .carousel-artist {
-            font-size: 0.75rem;
-          }
-        }
       `}</style>
     </div>
   );
