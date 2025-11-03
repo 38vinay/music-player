@@ -41,7 +41,7 @@ export default function Player() {
   if (!currentTrack) {
     return (
       <div className="player-container no-track">
-        <p className="text-muted mb-0">No track playing</p>
+        <p className="text-muted mb-0"></p>
       </div>
     );
   }
