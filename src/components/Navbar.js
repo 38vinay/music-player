@@ -4,7 +4,6 @@ import {
   Form,
   FormControl,
   Button,
-  Container,
   Modal,
   Dropdown,
 } from "react-bootstrap";
@@ -64,7 +63,7 @@ export default function AppNavbar({ onToggleSidebar }) {
   return (
     <>
       <Navbar expand="lg" variant="dark" fixed="top" className="custom-navbar">
-        <Container fluid className="px-3">
+        <div className="navbar-container d-flex align-items-center justify-content-between px-3 w-100">
           {/* Left Section - Menu & Logo */}
           <div className="d-flex align-items-center">
             <Button
@@ -74,8 +73,6 @@ export default function AppNavbar({ onToggleSidebar }) {
             >
               <FaBars />
             </Button>
-
-            
           </div>
 
           {/* Center Section - Search Bar */}
@@ -150,7 +147,7 @@ export default function AppNavbar({ onToggleSidebar }) {
               </Button>
             )}
           </div>
-        </Container>
+        </div>
       </Navbar>
 
       {/* Search Modal */}
@@ -178,7 +175,7 @@ export default function AppNavbar({ onToggleSidebar }) {
           ) : searchResults.length === 0 ? (
             <div className="text-center py-5">
               <FaTimes size={48} className="text-muted mb-3" />
-              <p className="text-muted">
+              <p className="text-light">
                 No results found. Try a different search term.
               </p>
             </div>
@@ -195,207 +192,219 @@ export default function AppNavbar({ onToggleSidebar }) {
 
       {/* ✅ Responsive CSS */}
       <style jsx>{`
-  /* 🌟 NAVBAR STYLING - Matches Home.jsx look */
-  .custom-navbar {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #282828;
-    padding: clamp(8px, 2vw, 16px) clamp(10px, 4vw, 30px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    z-index: 1030;
-  }
+        /* 🌟 NAVBAR STYLING - Matches Home.jsx look */
+        .custom-navbar {
+          background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.95) 0%,
+            rgba(0, 0, 0, 0.9) 100%
+          );
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid #282828;
+          padding: clamp(8px, 2vw, 16px) clamp(10px, 4vw, 30px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+          z-index: 1030;
+        }
 
-  .menu-toggle {
-    font-size: 1.6rem;
-    color: #fff;
-    margin-right: clamp(6px, 1vw, 12px);
-  }
+        .navbar-container {
+          padding-left: clamp(8px, 4vw, 30px);
+          padding-right: clamp(8px, 4vw, 30px);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: nowrap;
+          overflow-x: hidden;
+          width: 100%;
+        }
 
-  /* 🔍 SEARCH BAR CENTER */
-  .search-form {
-    flex: 1;
-    max-width: clamp(260px, 45vw, 500px);
-    margin: 0 auto;
-  }
+        .menu-toggle {
+          font-size: 1.6rem;
+          color: #fff;
+          margin-right: clamp(6px, 1vw, 12px);
+        }
 
-  .search-wrapper {
-    display: flex;
-    align-items: center;
-    gap: clamp(6px, 1vw, 10px);
-  }
+        /* 🔍 SEARCH BAR CENTER */
+        .search-form {
+          flex: 1;
+          max-width: clamp(260px, 45vw, 500px);
+          margin: 0 auto;
+        }
 
-  .search-input {
-    flex: 1;
-    background-color: rgba(255, 255, 255, 0.08);
-    border: 1px solid #333;
-    border-radius: 25px;
-    color: #fff;
-    padding: clamp(6px, 1.5vw, 12px) clamp(14px, 3vw, 20px);
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    transition: all 0.3s ease;
-  }
+        .search-wrapper {
+          display: flex;
+          align-items: center;
+          gap: clamp(6px, 1vw, 10px);
+          flex: 1;
+        }
 
-  .search-input:focus {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: #1db954;
-    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.25);
-  }
+        .search-input {
+          flex: 1;
+          background-color: rgba(255, 255, 255, 0.08);
+          border: 1px solid #333;
+          border-radius: 25px;
+          color: #fff !important;          /* force visible text */
+          caret-color: #1db954 !important; /* green cursor */
+          padding: clamp(6px, 1.5vw, 12px) clamp(14px, 3vw, 20px);
+          font-size: clamp(0.85rem, 2vw, 1rem);
+          transition: all 0.3s ease;
+        }
 
-  .search-input::placeholder {
-    color: #b3b3b3;
-  }
+        .search-input:focus {
+          background-color: rgba(255, 255, 255, 0.15);
+          border-color: #1db954;
+          box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.25);
+          color: #fff !important;
+          caret-color: #1db954 !important;
+        }
 
-  .search-button {
-    width: clamp(32px, 6vw, 42px);
-    height: clamp(32px, 6vw, 42px);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #1db954;
-    border: none;
-    color: white;
-    font-size: clamp(0.85rem, 2vw, 1rem);
-    transition: 0.3s ease;
-    box-shadow: 0 2px 8px rgba(29, 185, 84, 0.4);
-  }
+        .search-input::placeholder {
+          color: #b3b3b3;
+        }
 
-  .search-button:hover {
-    background-color: #1ed760;
-    transform: scale(1.05);
-  }
+        .search-button {
+          width: clamp(32px, 6vw, 42px);
+          height: clamp(32px, 6vw, 42px);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #1db954;
+          border: none;
+          color: white;
+          font-size: clamp(0.85rem, 2vw, 1rem);
+          transition: 0.3s ease;
+          box-shadow: 0 2px 8px rgba(29, 185, 84, 0.4);
+        }
 
-  /* 👤 USER / LOGIN SECTION */
-  .user-dropdown-toggle {
-    background-color: transparent;
-    border: 1px solid #333;
-    border-radius: 30px;
-    padding: clamp(4px, 1vw, 8px) clamp(10px, 2vw, 15px);
-    display: flex;
-    align-items: center;
-    gap: clamp(6px, 1vw, 10px);
-    transition: all 0.3s ease;
-  }
+        .search-button:hover {
+          background-color: #1ed760;
+          transform: scale(1.05);
+        }
 
-  .user-dropdown-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-color: #444;
-  }
+        /* 👤 USER / LOGIN SECTION */
+        .user-dropdown-toggle {
+          background-color: transparent;
+          border: 1px solid #333;
+          border-radius: 30px;
+          padding: clamp(4px, 1vw, 8px) clamp(10px, 2vw, 15px);
+          display: flex;
+          align-items: center;
+          gap: clamp(6px, 1vw, 10px);
+          transition: all 0.3s ease;
+        }
 
-  .user-avatar {
-    width: clamp(28px, 6vw, 34px);
-    height: clamp(28px, 6vw, 34px);
-    border-radius: 50%;
-    object-fit: cover;
-  }
+        .user-dropdown-toggle:hover {
+          background-color: rgba(255, 255, 255, 0.05);
+          border-color: #444;
+        }
 
-  .user-name {
-    font-weight: 500;
-    font-size: clamp(0.8rem, 2vw, 0.95rem);
-    color: #fff;
-  }
+        .user-avatar {
+          width: clamp(28px, 6vw, 34px);
+          height: clamp(28px, 6vw, 34px);
+          border-radius: 50%;
+          object-fit: cover;
+        }
 
-  .user-dropdown-menu {
-    background-color: #181818;
-    border: 1px solid #282828;
-    border-radius: 10px;
-    padding: 5px 0;
-    min-width: 200px;
-  }
+        .user-name {
+          font-weight: 500;
+          font-size: clamp(0.8rem, 2vw, 0.95rem);
+          color: #fff;
+        }
 
-  .dropdown-item-custom {
-    color: #fff;
-    padding: 12px 16px;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-  }
+        .user-dropdown-menu {
+          background-color: #181818;
+          border: 1px solid #282828;
+          border-radius: 10px;
+          padding: 5px 0;
+          min-width: 200px;
+        }
 
-  .dropdown-item-custom:hover {
-    background-color: #282828;
-    color: #fff;
-  }
+        .dropdown-item-custom {
+          color: #fff;
+          padding: 12px 16px;
+          font-size: 0.9rem;
+          transition: all 0.2s ease;
+        }
 
-  .login-button {
-    border-radius: 25px;
-    padding: clamp(6px, 1vw, 10px) clamp(15px, 3vw, 22px);
-    font-weight: 600;
-    border: 2px solid #1db954;
-    background: transparent;
-    color: #1db954;
-    font-size: clamp(0.8rem, 2vw, 0.95rem);
-    transition: all 0.3s ease;
-  }
+        .dropdown-item-custom:hover {
+          background-color: #282828;
+          color: #fff;
+        }
 
-  .login-button:hover {
-    background-color: #1db954;
-    color: #fff;
-    transform: translateY(-2px);
-  }
+        .login-button {
+          border-radius: 25px;
+          padding: clamp(6px, 1vw, 10px) clamp(15px, 3vw, 22px);
+          font-weight: 600;
+          border: 2px solid #1db954;
+          background: transparent;
+          color: #1db954;
+          font-size: clamp(0.8rem, 2vw, 0.95rem);
+          transition: all 0.3s ease;
+        }
 
-  /* 🎵 SEARCH MODAL */
-  .modal-header-custom {
-    background-color: #181818;
-    border-bottom: 1px solid #282828;
-    color: #fff;
-    padding: clamp(10px, 2vw, 20px);
-  }
+        .login-button:hover {
+          background-color: #1db954;
+          color: #fff;
+          transform: translateY(-2px);
+        }
 
-  .modal-body-custom {
-    background-color: #121212;
-    color: #fff;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding: clamp(10px, 3vw, 24px);
-  }
+        /* 🎵 SEARCH MODAL */
+        .modal-header-custom {
+          background-color: #181818;
+          border-bottom: 1px solid #282828;
+          color: #fff;
+          padding: clamp(10px, 2vw, 20px);
+        }
 
-  .modal-footer-custom {
-    background-color: #181818;
-    border-top: 1px solid #282828;
-    padding: clamp(10px, 2vw, 20px);
-  }
+        .modal-body-custom {
+          background-color: #121212;
+          color: #fff;
+          max-height: 70vh;
+          overflow-y: auto;
+          padding: clamp(10px, 3vw, 24px);
+        }
 
-  /* 📱 RESPONSIVE LAYOUTS */
-  @media (max-width: 768px) {
-    .search-form {
-      max-width: clamp(180px, 45vw, 300px);
-    }
+        .modal-footer-custom {
+          background-color: #181818;
+          border-top: 1px solid #282828;
+          padding: clamp(10px, 2vw, 20px);
+        }
 
-    .search-input {
-      padding: 6px 12px;
-      font-size: 0.9rem;
-    }
+        /* 📱 RESPONSIVE LAYOUTS */
+        @media (max-width: 768px) {
+          .search-form {
+            max-width: 60vw;
+          }
+        }
 
-    .user-name {
-      display: none;
-    }
-  }
+        @media (max-width: 576px) {
+          .custom-navbar {
+            padding: clamp(6px, 2vw, 10px) clamp(8px, 3vw, 16px);
+          }
 
-  @media (max-width: 576px) {
-    .custom-navbar {
-      padding: clamp(6px, 2vw, 10px) clamp(8px, 3vw, 16px);
-    }
+          .search-form {
+            max-width: 55vw;
+          }
 
-    .search-form {
-      max-width: 70%;
-    }
+          .search-wrapper {
+            flex: 1;
+          }
 
-    .search-button {
-      width: 32px;
-      height: 32px;
-    }
+          .login-button {
+            padding: 5px 10px;
+            font-size: 0.75rem;
+          }
 
-    .login-button {
-      padding: 5px 12px;
-      font-size: 0.8rem;
-    }
+          .user-name {
+            display: none;
+          }
 
-    .user-avatar {
-      width: 28px;
-      height: 28px;
-    }
-  }
-`}</style>
-
+          .user-avatar {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      `}</style>
     </>
   );
 }
