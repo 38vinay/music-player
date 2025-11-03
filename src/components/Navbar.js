@@ -8,7 +8,15 @@ import {
   Modal,
   Dropdown,
 } from "react-bootstrap";
-import { FaSearch, FaBars, FaTimes, FaUser, FaSignOutAlt, FaHeart, FaMusic } from "react-icons/fa";
+import {
+  FaSearch,
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignOutAlt,
+  FaHeart,
+  FaMusic,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MusicContext } from "../context/MusicContext";
 import { AuthContext } from "../context/AuthContext";
@@ -55,36 +63,23 @@ export default function AppNavbar({ onToggleSidebar }) {
 
   return (
     <>
-      <Navbar
-        expand="lg"
-        variant="dark"
-        fixed="top"
-        className="custom-navbar"
-      >
+      <Navbar expand="lg" variant="dark" fixed="top" className="custom-navbar">
         <Container fluid className="px-3">
           {/* Left Section - Menu & Logo */}
           <div className="d-flex align-items-center">
-            {/* Mobile Menu Toggle */}
             <Button
               variant="link"
-              className="text-light d-lg-none me-2 p-0"
+              className="text-light d-lg-none me-2 p-0 menu-toggle"
               onClick={onToggleSidebar}
-              style={{ fontSize: "1.5rem" }}
             >
               <FaBars />
             </Button>
 
-            {/* Logo - Show on mobile, hide on desktop */}
-            <div className="d-lg-none">
-              <h5 className="text-success fw-bold mb-0">🎵 Music</h5>
-            </div>
+            
           </div>
 
           {/* Center Section - Search Bar */}
-          <Form 
-            className="search-form" 
-            onSubmit={handleSearch}
-          >
+          <Form className="search-form mx-auto" onSubmit={handleSearch}>
             <div className="search-wrapper">
               <FormControl
                 type="search"
@@ -94,17 +89,13 @@ export default function AppNavbar({ onToggleSidebar }) {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="search-input"
               />
-              <Button
-                variant="success"
-                type="submit"
-                className="search-button"
-              >
+              <Button variant="success" type="submit" className="search-button">
                 <FaSearch />
               </Button>
             </div>
           </Form>
 
-          {/* Right Section - Profile */}
+          {/* Right Section - User / Login */}
           <div className="d-flex align-items-center">
             {isAuthenticated ? (
               <Dropdown align="end">
@@ -118,7 +109,9 @@ export default function AppNavbar({ onToggleSidebar }) {
                     alt={user.name}
                     className="user-avatar"
                   />
-                  <span className="user-name d-none d-md-inline">{user.name}</span>
+                  <span className="user-name d-none d-md-inline">
+                    {user.name}
+                  </span>
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu className="user-dropdown-menu">
@@ -160,7 +153,7 @@ export default function AppNavbar({ onToggleSidebar }) {
         </Container>
       </Navbar>
 
-      {/* Search Results Modal */}
+      {/* Search Modal */}
       <Modal
         show={showSearchModal}
         onHide={handleCloseModal}
@@ -200,186 +193,209 @@ export default function AppNavbar({ onToggleSidebar }) {
         </Modal.Footer>
       </Modal>
 
+      {/* ✅ Responsive CSS */}
       <style jsx>{`
-        .custom-navbar {
-          background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.9) 100%);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid #282828;
-          padding: 0.75rem 0;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+  /* 🌟 NAVBAR STYLING - Matches Home.jsx look */
+  .custom-navbar {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.9) 100%);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #282828;
+    padding: clamp(8px, 2vw, 16px) clamp(10px, 4vw, 30px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1030;
+  }
 
-        .search-form {
-          flex: 1;
-          max-width: 500px;
-          margin: 0 auto;
-        }
+  .menu-toggle {
+    font-size: 1.6rem;
+    color: #fff;
+    margin-right: clamp(6px, 1vw, 12px);
+  }
 
-        .search-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+  /* 🔍 SEARCH BAR CENTER */
+  .search-form {
+    flex: 1;
+    max-width: clamp(260px, 45vw, 500px);
+    margin: 0 auto;
+  }
 
-        .search-input {
-          flex: 1;
-          background-color: rgba(255,255,255,0.1);
-          border: 1px solid #282828;
-          border-radius: 20px;
-          color: #fff;
-          padding: 10px 20px;
-          transition: all 0.3s ease;
-        }
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1vw, 10px);
+  }
 
-        .search-input:focus {
-          background-color: rgba(255,255,255,0.15);
-          border-color: #1DB954;
-          color: #fff;
-          box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1);
-        }
+  .search-input {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid #333;
+    border-radius: 25px;
+    color: #fff;
+    padding: clamp(6px, 1.5vw, 12px) clamp(14px, 3vw, 20px);
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    transition: all 0.3s ease;
+  }
 
-        .search-input::placeholder {
-          color: #b3b3b3;
-        }
+  .search-input:focus {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #1db954;
+    box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.25);
+  }
 
-        .search-button {
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #1DB954;
-          border: none;
-          padding: 0;
-        }
+  .search-input::placeholder {
+    color: #b3b3b3;
+  }
 
-        .search-button:hover {
-          background-color: #1ed760;
-          transform: scale(1.05);
-        }
+  .search-button {
+    width: clamp(32px, 6vw, 42px);
+    height: clamp(32px, 6vw, 42px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1db954;
+    border: none;
+    color: white;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    transition: 0.3s ease;
+    box-shadow: 0 2px 8px rgba(29, 185, 84, 0.4);
+  }
 
-        .user-dropdown-toggle {
-          background-color: transparent;
-          border: 1px solid #282828;
-          border-radius: 25px;
-          padding: 6px 15px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          transition: all 0.2s ease;
-        }
+  .search-button:hover {
+    background-color: #1ed760;
+    transform: scale(1.05);
+  }
 
-        .user-dropdown-toggle:hover {
-          background-color: #282828;
-          border-color: #3e3e3e;
-        }
+  /* 👤 USER / LOGIN SECTION */
+  .user-dropdown-toggle {
+    background-color: transparent;
+    border: 1px solid #333;
+    border-radius: 30px;
+    padding: clamp(4px, 1vw, 8px) clamp(10px, 2vw, 15px);
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 1vw, 10px);
+    transition: all 0.3s ease;
+  }
 
-        .user-avatar {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          object-fit: cover;
-        }
+  .user-dropdown-toggle:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: #444;
+  }
 
-        .user-name {
-          font-weight: 500;
-          font-size: 0.9rem;
-        }
+  .user-avatar {
+    width: clamp(28px, 6vw, 34px);
+    height: clamp(28px, 6vw, 34px);
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
-        .user-dropdown-menu {
-          background-color: #282828;
-          border: 1px solid #3e3e3e;
-          border-radius: 8px;
-          min-width: 200px;
-          margin-top: 8px;
-        }
+  .user-name {
+    font-weight: 500;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    color: #fff;
+  }
 
-        .dropdown-item-custom {
-          color: #fff;
-          padding: 12px 16px;
-          transition: all 0.2s ease;
-        }
+  .user-dropdown-menu {
+    background-color: #181818;
+    border: 1px solid #282828;
+    border-radius: 10px;
+    padding: 5px 0;
+    min-width: 200px;
+  }
 
-        .dropdown-item-custom:hover {
-          background-color: #3e3e3e;
-          color: #fff;
-        }
+  .dropdown-item-custom {
+    color: #fff;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
 
-        .login-button {
-          border-radius: 25px;
-          padding: 8px 20px;
-          font-weight: 600;
-          border: 2px solid #1DB954;
-          transition: all 0.2s ease;
-        }
+  .dropdown-item-custom:hover {
+    background-color: #282828;
+    color: #fff;
+  }
 
-        .login-button:hover {
-          background-color: #1DB954;
-          transform: translateY(-2px);
-        }
+  .login-button {
+    border-radius: 25px;
+    padding: clamp(6px, 1vw, 10px) clamp(15px, 3vw, 22px);
+    font-weight: 600;
+    border: 2px solid #1db954;
+    background: transparent;
+    color: #1db954;
+    font-size: clamp(0.8rem, 2vw, 0.95rem);
+    transition: all 0.3s ease;
+  }
 
-        .modal-header-custom {
-          background-color: #181818;
-          border-bottom: 1px solid #282828;
-          color: #fff;
-        }
+  .login-button:hover {
+    background-color: #1db954;
+    color: #fff;
+    transform: translateY(-2px);
+  }
 
-        .modal-body-custom {
-          background-color: #121212;
-          color: #fff;
-          max-height: 70vh;
-          overflow-y: auto;
-        }
+  /* 🎵 SEARCH MODAL */
+  .modal-header-custom {
+    background-color: #181818;
+    border-bottom: 1px solid #282828;
+    color: #fff;
+    padding: clamp(10px, 2vw, 20px);
+  }
 
-        .modal-footer-custom {
-          background-color: #181818;
-          border-top: 1px solid #282828;
-        }
+  .modal-body-custom {
+    background-color: #121212;
+    color: #fff;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: clamp(10px, 3vw, 24px);
+  }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-          .search-form {
-            max-width: 300px;
-          }
+  .modal-footer-custom {
+    background-color: #181818;
+    border-top: 1px solid #282828;
+    padding: clamp(10px, 2vw, 20px);
+  }
 
-          .search-input {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-          }
+  /* 📱 RESPONSIVE LAYOUTS */
+  @media (max-width: 768px) {
+    .search-form {
+      max-width: clamp(180px, 45vw, 300px);
+    }
 
-          .search-button {
-            width: 36px;
-            height: 36px;
-          }
-        }
+    .search-input {
+      padding: 6px 12px;
+      font-size: 0.9rem;
+    }
 
-        @media (max-width: 576px) {
-          .search-form {
-            max-width: 200px;
-          }
+    .user-name {
+      display: none;
+    }
+  }
 
-          .search-input {
-            padding: 6px 12px;
-            font-size: 0.85rem;
-          }
+  @media (max-width: 576px) {
+    .custom-navbar {
+      padding: clamp(6px, 2vw, 10px) clamp(8px, 3vw, 16px);
+    }
 
-          .search-button {
-            width: 32px;
-            height: 32px;
-          }
+    .search-form {
+      max-width: 70%;
+    }
 
-          .user-avatar {
-            width: 28px;
-            height: 28px;
-          }
+    .search-button {
+      width: 32px;
+      height: 32px;
+    }
 
-          .login-button {
-            padding: 6px 15px;
-            font-size: 0.85rem;
-          }
-        }
-      `}</style>
+    .login-button {
+      padding: 5px 12px;
+      font-size: 0.8rem;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+    }
+  }
+`}</style>
+
     </>
   );
 }
