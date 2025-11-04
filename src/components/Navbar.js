@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   Navbar,
   Form,
@@ -8,7 +8,16 @@ import {
   Modal,
   Dropdown,
 } from "react-bootstrap";
-import { FaSearch, FaBars, FaTimes, FaUser, FaSignOutAlt, FaHeart, FaMusic } from "react-icons/fa";
+import {
+  FaSearch,
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignOutAlt,
+  FaHeart,
+  FaMusic,
+  FaPlay,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { MusicContext } from "../context/MusicContext";
 import { AuthContext } from "../context/AuthContext";
@@ -17,24 +26,58 @@ import { searchMusic } from "../utils/api";
 import logo from "../assets/logo.svg";
 
 export default function AppNavbar({ onToggleSidebar }) {
-  const [showSearchModal, setShowSearchModal] = useState(false);
+    const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionRef = useRef(null);
+
   const { playTrack } = useContext(MusicContext);
   const { user, isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (suggestionRef.current && !suggestionRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Debounce live search
+  useEffect(() => {
+    const delayDebounce = setTimeout(async () => {
+      if (searchQuery.trim().length > 1) {
+        try {
+          const data = await searchMusic(searchQuery.trim());
+          setSuggestions(data.slice(0, 5));
+          setShowSuggestions(true);
+        } catch (err) {
+          console.error("Error fetching suggestions:", err);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 400);
+    return () => clearTimeout(delayDebounce);
+  }, [searchQuery]);
+
   const handleSearch = async (e) => {
     e.preventDefault();
-    const query = searchQuery.trim();
-    if (!query) return;
+    if (!searchQuery.trim()) return;
 
     setShowSearchModal(true);
     setIsSearching(true);
+    setShowSuggestions(false);
 
     try {
-      const data = await searchMusic(query);
+      const data = await searchMusic(searchQuery.trim());
       setSearchResults(data);
     } catch (error) {
       console.error("Search failed:", error);
@@ -53,6 +96,13 @@ export default function AppNavbar({ onToggleSidebar }) {
   const handlePlayFromModal = (track) => {
     playTrack(track, searchResults);
   };
+
+  const handleSuggestionClick = (song) => {
+    setSearchQuery(song.trackName);
+    setShowSuggestions(false);
+    handleSearch({ preventDefault: () => {} });
+  };
+
 
   return (
     <>
@@ -160,6 +210,37 @@ export default function AppNavbar({ onToggleSidebar }) {
           </div>
         </Container>
       </Navbar>
+       {showSuggestions && suggestions.length > 0 && (
+        <div className="suggestions-dropdown" ref={suggestionRef}>
+          {suggestions.map((song, idx) => (
+            <div
+              key={idx}
+              className="suggestion-item"
+              onClick={() => handleSuggestionClick(song)}
+            >
+              <img
+                src={song.artworkUrl100}
+                alt={song.trackName}
+                className="suggestion-artwork"
+              />
+              <div className="suggestion-info">
+                <div className="suggestion-title">{song.trackName}</div>
+                <div className="suggestion-artist">{song.artistName}</div>
+              </div>
+              <Button
+                className="suggestion-play-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playTrack(song, suggestions);
+                  setShowSuggestions(false);
+                }}
+              >
+                <FaPlay size={10} />
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Search Results Modal */}
       <Modal
@@ -202,6 +283,76 @@ export default function AppNavbar({ onToggleSidebar }) {
       </Modal>
 
       <style jsx>{`
+      .suggestions-dropdown {
+          position: absolute;
+          top: 66px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: min(90%, 500px);
+          background: #181818;
+          border: 1px solid #282828;
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+          z-index: 2000;
+          overflow: hidden;
+        }
+
+        .suggestion-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 8px 12px;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+          background-color: #282828;
+        }
+
+        .suggestion-artwork {
+          width: 40px;
+          height: 40px;
+          border-radius: 6px;
+          object-fit: cover;
+        }
+
+        .suggestion-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .suggestion-title {
+          color: #fff;
+          font-size: 0.9rem;
+          font-weight: 500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .suggestion-artist {
+          color: #b3b3b3;
+          font-size: 0.8rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .suggestion-play-btn {
+          background-color: #1db954;
+          border: none;
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .suggestion-play-btn:hover {
+          background-color: #1ed760;
+        }
         .custom-navbar {
           background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.9) 100%);
           backdrop-filter: blur(10px);
