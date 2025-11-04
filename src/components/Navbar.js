@@ -77,7 +77,7 @@ export default function AppNavbar({ onToggleSidebar }) {
 
             {/* Logo - Show on mobile, hide on desktop */}
             <div className="d-lg-none">
-             <img src={logo} alt="Logo" width={160} className="me-2" />
+             <img src={logo} alt="Logo" width={100} className="me-2" />
             </div>
           </div>
 
