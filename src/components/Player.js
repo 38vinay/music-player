@@ -255,8 +255,8 @@ export default function Player() {
 
         .control-btn-prev,
         .control-btn-next {
-          width: 36px;
-          height: 36px;
+          width: 46px;
+          height: 46px;
           background-color: transparent;
           border: 1px solid #404040;
           color: #fff;
@@ -335,8 +335,8 @@ export default function Player() {
 
           .control-btn-prev,
           .control-btn-next {
-            width: 32px;
-            height: 32px;
+            width: 42px;
+            height: 42px;
           }
 
           .control-btn-play {
@@ -385,8 +385,8 @@ export default function Player() {
 
           .control-btn-prev,
           .control-btn-next {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
           }
 
           .control-btn-prev svg,
